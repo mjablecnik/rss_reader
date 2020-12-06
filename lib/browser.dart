@@ -1,24 +1,7 @@
 import 'package:flutter/material.dart';
 import 'package:flutter/rendering.dart';
 import 'package:flutter_inappwebview/flutter_inappwebview.dart';
-import 'package:flutter_riverpod/flutter_riverpod.dart';
 
-
-final browserDataProvider = StateProvider((ref) => BrowserData("https://zive.cz/"));
-class BrowserData extends StateNotifier<int> {
-
-  InAppWebViewController webView;
-  String url;
-  double progress = 0;
-  bool withUrlBar;
-  bool withButtonBar;
-
-  BrowserData(url, {withUrlBar: true, withButtonBar: true}) : super(null) {
-    this.url = url;
-    this.withUrlBar = withUrlBar;
-    this.withButtonBar = withButtonBar;
-  }
-}
 
 class BrowserScreen extends StatelessWidget {
 
@@ -28,15 +11,15 @@ class BrowserScreen extends StatelessWidget {
         home: Scaffold(
             appBar: AppBar(
               title: const Text('InAppWebView Example'),
-              actions: [
-                GestureDetector(
-                  onTap: () => {print("test")},
-                  child: Container(
-                    margin: EdgeInsets.only(left: 15, right: 15),
-                    child: Icon(Icons.refresh)
-                  )
-                )
-              ],
+              //actions: [
+              //  GestureDetector(
+              //    onTap: () => {print("test")},
+              //    child: Container(
+              //      margin: EdgeInsets.only(left: 15, right: 15),
+              //      child: Icon(Icons.refresh)
+              //    )
+              //  )
+              //],
             ),
             body: Browser(),
         )
@@ -44,15 +27,37 @@ class BrowserScreen extends StatelessWidget {
   }
 }
 
-class Browser extends StatelessWidget {
+class Browser extends StatefulWidget {
 
-  //InAppWebViewController webView;
-  //String url;
-  //double progress = 0;
+  @override
+  _BrowserState createState() => new _BrowserState();
+
+}
+
+class _BrowserState extends State<Browser> {
+
+  InAppWebViewController webView;
+  String url;
+  double progress = 0;
   TextEditingController urlController = TextEditingController();
+  bool withUrlBar = false;
+  bool withButtonBar = false;
 
+  _BrowserState() {
+    url = "https://seznam.cz/";//context.read(browserDataProvider).state["url"];
+  }
 
-  Container getUrlBar(BuildContext context, bool show) {
+  @override
+  void initState() {
+    super.initState();
+  }
+
+  @override
+  void dispose() {
+    super.dispose();
+  }
+
+  Container getUrlBar(bool show) {
     if (show) {
       return Container(
         padding: EdgeInsets.all(10.0),
@@ -70,11 +75,12 @@ class Browser extends StatelessWidget {
               ConstrainedBox(
                   constraints: BoxConstraints(maxWidth: 50),
                   child: RaisedButton(
-                      onPressed: ()
+                      onPressed: () =>
                       {
-                        var browserData = context.read(browserDataProvider).state;
-                        browserData.url = urlController.text;
-                        browserData.webView.loadUrl(url: browserData.url);
+                        setState(() {
+                          this.url = urlController.text;
+                        }),
+                        this.webView.loadUrl(url: this.url)
                       },
                       child: Text("Go")
                   )
@@ -86,8 +92,7 @@ class Browser extends StatelessWidget {
     }
   }
 
-  Container getProgressIndicator(BuildContext context) {
-    var progress = context.read(browserDataProvider).state.progress;
+  Container getProgressIndicator() {
     return Container(
         padding: EdgeInsets.all(1.0),
         child: progress < 1.0
@@ -96,12 +101,12 @@ class Browser extends StatelessWidget {
     );
   }
 
-  Container getWebView(BuildContext context) {
+  Container getWebView() {
     return Container(
       //margin: const EdgeInsets.all(10.0),
       //decoration: BoxDecoration(border: Border.all(color: Colors.blueAccent)),
       child: InAppWebView(
-        initialUrl: context.read(browserDataProvider).state.url,
+        initialUrl: this.url,
         initialHeaders: {},
         initialOptions: InAppWebViewGroupOptions(
             crossPlatform: InAppWebViewOptions(
@@ -109,22 +114,30 @@ class Browser extends StatelessWidget {
             )
         ),
         onWebViewCreated: (InAppWebViewController controller) {
-          context.read(browserDataProvider).state.webView = controller;
+          webView = controller;
         },
         onLoadStart: (InAppWebViewController controller, String url) {
-          context.read(browserDataProvider).state.url = url;
+          setState(() {
+            this.url = url;
+          });
         },
-        onLoadStop: (InAppWebViewController controller, String url) async {
-          context.read(browserDataProvider).state.url = url;
+        onLoadStop: (InAppWebViewController controller,
+            String url) async {
+          setState(() {
+            this.url = url;
+          });
         },
-        onProgressChanged: (InAppWebViewController controller, int progress) {
-          context.read(browserDataProvider).state.progress = progress / 100;
+        onProgressChanged: (InAppWebViewController controller,
+            int progress) {
+          setState(() {
+            this.progress = progress / 100;
+          });
         },
       ),
     );
   }
 
-  Container getButtonBar(BuildContext context, bool show) {
+  Container getButtonBar(bool show) {
     if (show) {
       return Container(
         child: ButtonBar(
@@ -133,7 +146,6 @@ class Browser extends StatelessWidget {
             RaisedButton(
               child: Icon(Icons.arrow_back),
               onPressed: () {
-                var webView = context.read(browserDataProvider).state.webView;
                 if (webView != null) {
                   webView.goBack();
                 }
@@ -142,7 +154,6 @@ class Browser extends StatelessWidget {
             RaisedButton(
               child: Icon(Icons.arrow_forward),
               onPressed: () {
-                var webView = context.read(browserDataProvider).state.webView;
                 if (webView != null) {
                   webView.goForward();
                 }
@@ -151,7 +162,6 @@ class Browser extends StatelessWidget {
             RaisedButton(
               child: Icon(Icons.refresh),
               onPressed: () {
-                var webView = context.read(browserDataProvider).state.webView;
                 if (webView != null) {
                   webView.reload();
                 }
@@ -160,9 +170,10 @@ class Browser extends StatelessWidget {
             RaisedButton(
               child: Icon(Icons.arrow_downward),
               onPressed: () {
-                var browserData = context.read(browserDataProvider).state;
-                browserData.withUrlBar = false;
-                browserData.withButtonBar = false;
+                setState(() {
+                  this.withButtonBar = false;
+                  this.withUrlBar = false;
+                });
               },
             ),
           ],
@@ -175,15 +186,13 @@ class Browser extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
-    final browserData = context.read(browserDataProvider).state;
-    this.urlController.text = browserData.url;
 
     return Container(
       child: Column(children: <Widget>[
-        getUrlBar(context, browserData.withUrlBar),
-        getProgressIndicator(context),
-        Expanded(child: getWebView(context)),
-        getButtonBar(context, browserData.withButtonBar)
+        getUrlBar(withUrlBar),
+        getProgressIndicator(),
+        Expanded(child: getWebView()),
+        getButtonBar(withButtonBar)
       ])
     );
   }

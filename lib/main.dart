@@ -1,7 +1,7 @@
 import 'dart:async';
 import 'package:flutter/material.dart';
 import 'package:flutter_riverpod/all.dart';
-import 'browser2.dart';
+import 'browser.dart';
 
 
 Future main() async {
