@@ -1,6 +1,7 @@
 import 'package:flutter/material.dart';
 import 'package:flutter/rendering.dart';
 import 'package:flutter_inappwebview/flutter_inappwebview.dart';
+import 'package:flutter_web_app/url_form.dart';
 
 
 class BrowserScreen extends StatelessWidget {
@@ -45,7 +46,6 @@ class _BrowserState extends State<Browser> {
   InAppWebViewController webView;
   String url;
   double progress = 0;
-  TextEditingController urlController = TextEditingController();
   bool withUrlBar = true;
   bool withButtonBar = true;
 
@@ -53,7 +53,6 @@ class _BrowserState extends State<Browser> {
   @override
   void initState() {
     this.url = widget.url;
-    this.urlController.text = widget.url;
     super.initState();
   }
 
@@ -66,31 +65,15 @@ class _BrowserState extends State<Browser> {
     if (show) {
       return Container(
         padding: EdgeInsets.all(10.0),
-        child: Row(
-            mainAxisAlignment: MainAxisAlignment.spaceEvenly,
-            children: [
-              Flexible(
-                  child: Container(
-                      margin: EdgeInsets.only(left: 5, right: 20),
-                      child: TextField(
-                          controller: urlController
-                      )
-                  )
-              ),
-              ConstrainedBox(
-                  constraints: BoxConstraints(maxWidth: 50),
-                  child: RaisedButton(
-                      onPressed: () =>
-                      {
-                        setState(() {
-                          this.url = urlController.text;
-                        }),
-                        this.webView.loadUrl(url: this.url)
-                      },
-                      child: Text("Go")
-                  )
-              )
-            ]),
+        child: UrlForm(
+          defaultUrl: widget.url,
+          onSubmit: (url) {
+            setState(() {
+              this.url = url;
+            });
+            this.webView.loadUrl(url: url);
+          },
+        ),
       );
     } else {
       return Container();
