@@ -5,29 +5,35 @@ import 'package:flutter_inappwebview/flutter_inappwebview.dart';
 
 class BrowserScreen extends StatelessWidget {
 
+  String url;
+
+  BrowserScreen ({ Key key, this.url }): super(key: key);
+
   @override
   Widget build(BuildContext context) {
-    return MaterialApp(
-        home: Scaffold(
-            appBar: AppBar(
-              title: const Text('InAppWebView Example'),
-              //actions: [
-              //  GestureDetector(
-              //    onTap: () => {print("test")},
-              //    child: Container(
-              //      margin: EdgeInsets.only(left: 15, right: 15),
-              //      child: Icon(Icons.refresh)
-              //    )
-              //  )
-              //],
-            ),
-            body: Browser(),
-        )
+    return Scaffold(
+        appBar: AppBar(
+          title: const Text('InAppWebView Example'),
+          //actions: [
+          //  GestureDetector(
+          //    onTap: () => {print("test")},
+          //    child: Container(
+          //      margin: EdgeInsets.only(left: 15, right: 15),
+          //      child: Icon(Icons.refresh)
+          //    )
+          //  )
+          //],
+        ),
+        body: Browser(url: url),
     );
   }
 }
 
 class Browser extends StatefulWidget {
+
+  String url;
+
+  Browser ({ Key key, this.url }): super(key: key);
 
   @override
   _BrowserState createState() => new _BrowserState();
@@ -40,15 +46,14 @@ class _BrowserState extends State<Browser> {
   String url;
   double progress = 0;
   TextEditingController urlController = TextEditingController();
-  bool withUrlBar = false;
-  bool withButtonBar = false;
+  bool withUrlBar = true;
+  bool withButtonBar = true;
 
-  _BrowserState() {
-    url = "https://seznam.cz/";//context.read(browserDataProvider).state["url"];
-  }
 
   @override
   void initState() {
+    this.url = widget.url;
+    this.urlController.text = widget.url;
     super.initState();
   }
 
