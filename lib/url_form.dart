@@ -69,7 +69,6 @@ class _UrlForm extends State<UrlForm> {
               child: TextFormField(
                 controller: urlController,
                 onFieldSubmitted: processSearch,
-                textInputAction: TextInputAction.search,
                 validator: (value) {
                   RegExp exp = new RegExp(r"http(s)?://[a-z0-9-.:/=?&]+");
                   if (value.substring(0, 8) != "https://") {

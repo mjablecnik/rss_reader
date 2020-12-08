@@ -1,9 +1,13 @@
 import 'package:feed_finder/feed_finder.dart';
 import 'package:flutter/cupertino.dart';
+import 'package:flutter/foundation.dart';
 import 'package:flutter/material.dart';
+import 'package:flutter_riverpod/all.dart';
+import 'package:flutter_web_app/main.dart';
 import 'package:http/http.dart' as http;
 import 'package:webfeed/domain/rss_feed.dart';
 
+import 'RssFeed.dart';
 
 class RssFinderScreen extends StatelessWidget {
   @override
@@ -16,6 +20,13 @@ class RssFinderScreen extends StatelessWidget {
       body: Padding(
         padding: const EdgeInsets.all(20.0),
         child: RssFinder(),
+      ),
+      floatingActionButton: FloatingActionButton(
+        onPressed: () {
+          Navigator.pop(context);
+        },
+        child: Icon(Icons.save_alt),
+        backgroundColor: Colors.red,
       ),
     );
   }
@@ -34,8 +45,7 @@ class _RssFinder extends State<RssFinder> {
   final _formKey = GlobalKey<FormState>();
   TextEditingController _controller = TextEditingController();
   bool _showHiddingIcon = true;
-  List<RssFeed> _rssFeeds = [];
-  String _defaultImageUrl = "https://img2.pngio.com/documentation-screenshotlayer-api-default-png-250_250.png";
+  List<MyRssFeed> _rssFeeds = [];
   bool _isLoading = false;
 
   @override
@@ -66,19 +76,39 @@ class _RssFinder extends State<RssFinder> {
     return ListView(
       children: <Widget>[
         for (var rssFeed in _rssFeeds)
-          ListTile(
-            leading: new Container(
-              width: 60.0,
-              height: 60.0,
-              decoration: new BoxDecoration(
-                shape: BoxShape.circle,
-                image: new DecorationImage(
-                  fit: BoxFit.fill,
-                  image: new NetworkImage(rssFeed.image != null ? rssFeed.image.url : _defaultImageUrl)
-                )
-              )),
-            title: Text(rssFeed.title),
-            subtitle: Text(rssFeed.link),
+          Row(
+            children: [
+              Consumer(builder: (context, watch, _) {
+                return Checkbox(
+                  value: watch(feedsProvider).contains(rssFeed),
+                  onChanged: (bool checked) {
+                    var allFeeds = context.read(feedsProvider);
+                    if (checked) {
+                      allFeeds.add(rssFeed);
+                    } else {
+                      allFeeds.remove(rssFeed);
+                    }
+                  }
+                );
+              }),
+              Expanded(
+                child: ListTile(
+                  leading: new Container(
+                      width: 60.0,
+                      height: 60.0,
+                      decoration: new BoxDecoration(
+                          shape: BoxShape.circle,
+                          image: new DecorationImage(
+                              fit: BoxFit.fill,
+                              image: new NetworkImage(rssFeed.image != null ? rssFeed.image.url : defaultImageUrl)
+                          )
+                      )
+                  ),
+                  title: Text(rssFeed.title),
+                  subtitle: Text(rssFeed.link),
+                ),
+              ),
+            ],
           )
       ],
     );
@@ -108,7 +138,6 @@ class _RssFinder extends State<RssFinder> {
       child: TextFormField(
         controller: _controller,
         onFieldSubmitted: processSearch,
-        textInputAction: TextInputAction.search,
         validator: (value) {
           RegExp exp = new RegExp(r"^[a-z0-9-./]+$");
 
@@ -146,28 +175,27 @@ class _RssFinder extends State<RssFinder> {
 
   GestureDetector getSearchButton() {
     return GestureDetector(
-      onTap: validateAndSearch,
-      child: () {
-        if (!_isLoading) {
-          return Container(
-            constraints: BoxConstraints(maxWidth: 48, maxHeight: 48),
-            padding: const EdgeInsets.only(
-                top: 8, left: 9, bottom: 8, right: 9),
-            margin: const EdgeInsets.all(10),
-            child: Icon(Icons.search, size: 20, color: Colors.white),
-            decoration: BoxDecoration(
-                color: Colors.blue, borderRadius: BorderRadius.circular(5)),
-          );
-        } else {
-          return Container(
-            padding: const EdgeInsets.only(top: 2),
-            constraints: BoxConstraints(maxWidth: 25, maxHeight: 25),
-            margin: const EdgeInsets.all(10),
-            child: CircularProgressIndicator(),
-          );
-        }
-      }()
-    );
+        onTap: validateAndSearch,
+        child: () {
+          if (!_isLoading) {
+            return Container(
+              constraints: BoxConstraints(maxWidth: 48, maxHeight: 48),
+              padding:
+              const EdgeInsets.only(top: 8, left: 9, bottom: 8, right: 9),
+              margin: const EdgeInsets.all(10),
+              child: Icon(Icons.search, size: 20, color: Colors.white),
+              decoration: BoxDecoration(
+                  color: Colors.blue, borderRadius: BorderRadius.circular(5)),
+            );
+          } else {
+            return Container(
+              padding: const EdgeInsets.only(top: 2),
+              constraints: BoxConstraints(maxWidth: 25, maxHeight: 25),
+              margin: const EdgeInsets.all(10),
+              child: CircularProgressIndicator(),
+            );
+          }
+        }());
   }
 
   void processSearch(input) {
@@ -175,37 +203,37 @@ class _RssFinder extends State<RssFinder> {
   }
 
   void validateAndSearch() async {
-      if (!_formKey.currentState.validate()) return;
+    if (!_formKey.currentState.validate()) return;
 
-      setState(() {
-        _isLoading = true;
-        _rssFeeds = [];
-      });
+    setState(() {
+      _isLoading = true;
+      _rssFeeds = [];
+    });
 
-      var url = Uri.parse(_controller.text);
-      var httpsUrl;
-      if (url.scheme != "https") {
-        httpsUrl = "https://" + url.host + url.path;
-      }
-
-      var feedUrls = await FeedFinder.scrape(httpsUrl);
-      if (feedUrls.isNotEmpty) {
-        var client = http.Client();
-        for (var url in feedUrls) {
-          try {
-            var response = await client.get(url);
-            var feed = RssFeed.parse(response.body);
-            setState(() {
-              _rssFeeds.add(feed);
-            });
-          } catch (e) {
-            print("Cannot gain RssFeed for: " + url);
-          }
-        }
-        client.close();
-        setState(() {
-          _isLoading = false;
-        });
-      }
+    var url = Uri.parse(_controller.text);
+    var httpsUrl;
+    if (url.scheme != "https") {
+      httpsUrl = "https://" + url.host + url.path;
     }
+
+    var feedUrls = await FeedFinder.scrape(httpsUrl);
+    if (feedUrls.isNotEmpty) {
+      var client = http.Client();
+      for (var url in feedUrls) {
+        try {
+          var response = await client.get(url);
+          var feed = MyRssFeed.from(url, RssFeed.parse(response.body));
+          setState(() {
+            _rssFeeds.add(feed);
+          });
+        } catch (e) {
+          print("Cannot gain RssFeed for: " + url);
+        }
+      }
+      client.close();
+      setState(() {
+        _isLoading = false;
+      });
+    }
+  }
 }
