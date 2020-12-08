@@ -68,6 +68,7 @@ class _UrlForm extends State<UrlForm> {
               padding: const EdgeInsets.only(right: 10),
               child: TextFormField(
                 controller: urlController,
+                onFieldSubmitted: processSearch,
                 textInputAction: TextInputAction.search,
                 validator: (value) {
                   RegExp exp = new RegExp(r"http(s)?://[a-z0-9-.:/=?&]+");
@@ -114,16 +115,22 @@ class _UrlForm extends State<UrlForm> {
           ConstrainedBox(
             constraints: BoxConstraints(maxWidth: 50),
             child: ElevatedButton(
-              onPressed: () {
-                if (_formKey.currentState.validate()) {
-                  widget.onSubmit(urlController.text);
-                }
-              },
+              onPressed: validateAndSubmit,
               child: Text('Go'),
             ),
           )
         ],
       ),
     );
+  }
+
+  void processSearch(String input) {
+    validateAndSubmit();
+  }
+
+  void validateAndSubmit() {
+    if (_formKey.currentState.validate()) {
+      widget.onSubmit(urlController.text);
+    }
   }
 }
