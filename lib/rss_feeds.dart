@@ -2,8 +2,6 @@ import 'package:flutter/cupertino.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_riverpod/all.dart';
 import 'package:flutter_web_app/rss_finder.dart';
-import 'package:webfeed/domain/rss_feed.dart';
-
 import 'main.dart';
 
 class RssFeedListScreen extends StatelessWidget {

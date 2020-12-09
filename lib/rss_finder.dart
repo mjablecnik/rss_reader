@@ -76,40 +76,52 @@ class _RssFinder extends State<RssFinder> {
     return ListView(
       children: <Widget>[
         for (var rssFeed in _rssFeeds)
-          Row(
-            children: [
-              Consumer(builder: (context, watch, _) {
-                return Checkbox(
-                  value: watch(feedsProvider).contains(rssFeed),
-                  onChanged: (bool checked) {
-                    var allFeeds = context.read(feedsProvider);
-                    if (checked) {
-                      allFeeds.add(rssFeed);
-                    } else {
-                      allFeeds.remove(rssFeed);
+          Consumer(builder: (context, watch, _) {
+            return Container(
+            //color: context.read(feedsProvider).contains(rssFeed) ? Colors.lightBlueAccent : Colors.white,
+            child: Row(
+              children: [
+                  Checkbox(
+                    value: watch(feedsProvider).contains(rssFeed),
+                    onChanged: (bool checked) {
+                      var allFeeds = context.read(feedsProvider);
+                      if (checked) {
+                        allFeeds.add(rssFeed);
+                      } else {
+                        allFeeds.remove(rssFeed);
+                      }
                     }
-                  }
-                );
-              }),
-              Expanded(
-                child: ListTile(
-                  leading: new Container(
-                      width: 60.0,
-                      height: 60.0,
-                      decoration: new BoxDecoration(
-                          shape: BoxShape.circle,
-                          image: new DecorationImage(
-                              fit: BoxFit.fill,
-                              image: new NetworkImage(rssFeed.image != null ? rssFeed.image.url : defaultImageUrl)
-                          )
-                      )
                   ),
-                  title: Text(rssFeed.title),
-                  subtitle: Text(rssFeed.link),
+                Expanded(
+                  child: GestureDetector(
+                    onTap: () {
+                      var allFeeds = context.read(feedsProvider);
+                      if (allFeeds.contains(rssFeed)) {
+                        allFeeds.remove(rssFeed);
+                      } else {
+                        allFeeds.add(rssFeed);
+                      }
+                    },
+                    child: ListTile(
+                      leading: new Container(
+                          width: 60.0,
+                          height: 60.0,
+                          decoration: new BoxDecoration(
+                              shape: BoxShape.circle,
+                              image: new DecorationImage(
+                                  fit: BoxFit.fill,
+                                  image: new NetworkImage(rssFeed.image != null ? rssFeed.image.url : defaultImageUrl)
+                              )
+                          )
+                      ),
+                      title: Text(rssFeed.title),
+                      subtitle: Text(rssFeed.link),
+                    ),
+                  ),
                 ),
-              ),
-            ],
-          )
+            ]),
+            );
+          }),
       ],
     );
   }
