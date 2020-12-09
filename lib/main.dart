@@ -1,9 +1,9 @@
 import 'dart:async';
 import 'package:flutter/material.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
-import 'package:flutter_web_app/rss_feeds.dart';
+import 'package:flutter_web_app/rss_feed_list.dart';
 
-import 'RssFeed.dart';
+import 'rss_feed.dart';
 
 
 final feedsProvider = ChangeNotifierProvider<FeedList>((ref) => FeedList());

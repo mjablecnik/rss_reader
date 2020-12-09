@@ -47,7 +47,7 @@ class _RssFeedListState extends State<RssFeedList> {
           crossAxisCount: 4,
           crossAxisSpacing: 0,
           children: [
-            for (var feed in watch(feedsProvider).getFeeds().values)
+            for (var feed in watch(feedsProvider).getFeeds())
               Container(
                 child: Column(
                   children: [

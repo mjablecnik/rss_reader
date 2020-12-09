@@ -7,7 +7,7 @@ import 'package:flutter_web_app/main.dart';
 import 'package:http/http.dart' as http;
 import 'package:webfeed/domain/rss_feed.dart';
 
-import 'RssFeed.dart';
+import 'rss_feed.dart';
 
 class RssFinderScreen extends StatelessWidget {
   @override
@@ -45,8 +45,8 @@ class _RssFinder extends State<RssFinder> {
   final _formKey = GlobalKey<FormState>();
   TextEditingController _controller = TextEditingController();
   bool _showHiddingIcon = true;
-  List<MyRssFeed> _rssFeeds = [];
   bool _isLoading = false;
+  List<RssFeedWrapper> _feeds = [];
 
   @override
   void initState() {
@@ -75,31 +75,31 @@ class _RssFinder extends State<RssFinder> {
   ListView getRssFeedList() {
     return ListView(
       children: <Widget>[
-        for (var rssFeed in _rssFeeds)
+        for (var feedWrapper in _feeds)
           Consumer(builder: (context, watch, _) {
             return Container(
             //color: context.read(feedsProvider).contains(rssFeed) ? Colors.lightBlueAccent : Colors.white,
             child: Row(
               children: [
-                  Checkbox(
-                    value: watch(feedsProvider).contains(rssFeed),
-                    onChanged: (bool checked) {
-                      var allFeeds = context.read(feedsProvider);
-                      if (checked) {
-                        allFeeds.add(rssFeed);
-                      } else {
-                        allFeeds.remove(rssFeed);
-                      }
+                Checkbox(
+                  value: watch(feedsProvider).contains(feedWrapper),
+                  onChanged: (bool checked) {
+                    var allFeeds = context.read(feedsProvider);
+                    if (checked) {
+                      allFeeds.add(feedWrapper);
+                    } else {
+                      allFeeds.remove(feedWrapper);
                     }
-                  ),
+                  }
+                ),
                 Expanded(
                   child: GestureDetector(
                     onTap: () {
                       var allFeeds = context.read(feedsProvider);
-                      if (allFeeds.contains(rssFeed)) {
-                        allFeeds.remove(rssFeed);
+                      if (allFeeds.contains(feedWrapper)) {
+                        allFeeds.remove(feedWrapper);
                       } else {
-                        allFeeds.add(rssFeed);
+                        allFeeds.add(feedWrapper);
                       }
                     },
                     child: ListTile(
@@ -110,12 +110,12 @@ class _RssFinder extends State<RssFinder> {
                               shape: BoxShape.circle,
                               image: new DecorationImage(
                                   fit: BoxFit.fill,
-                                  image: new NetworkImage(rssFeed.image != null ? rssFeed.image.url : defaultImageUrl)
+                                  image: new NetworkImage(feedWrapper.feed.image != null ? feedWrapper.feed.image.url : defaultImageUrl)
                               )
                           )
                       ),
-                      title: Text(rssFeed.title),
-                      subtitle: Text(rssFeed.link),
+                      title: Text(feedWrapper.feed.title),
+                      subtitle: Text(feedWrapper.feed.link),
                     ),
                   ),
                 ),
@@ -219,7 +219,7 @@ class _RssFinder extends State<RssFinder> {
 
     setState(() {
       _isLoading = true;
-      _rssFeeds = [];
+      _feeds = [];
     });
 
     var url = Uri.parse(_controller.text);
@@ -234,9 +234,9 @@ class _RssFinder extends State<RssFinder> {
       for (var url in feedUrls) {
         try {
           var response = await client.get(url);
-          var feed = MyRssFeed.from(url, RssFeed.parse(response.body));
+          var feed = RssFeedWrapper.create(url, response.body);
           setState(() {
-            _rssFeeds.add(feed);
+            _feeds.add(feed);
           });
         } catch (e) {
           print("Cannot gain RssFeed for: " + url);
