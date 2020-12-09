@@ -12,8 +12,9 @@ class RssFeedListScreen extends StatelessWidget {
         title: Text("Rss feeds"),
       ),
       resizeToAvoidBottomInset: false,
-      body: Padding(
-        padding: const EdgeInsets.only(top: 30),
+      body: Container(
+        margin: const EdgeInsets.only(top: 30),
+        padding: const EdgeInsets.all(15),
         child: RssFeedList(),
       ),
       floatingActionButton: FloatingActionButton(
