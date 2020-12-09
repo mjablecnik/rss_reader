@@ -25,10 +25,13 @@ environment:
 dependencies:
   flutter_inappwebview: ^4.0.0+4
   flutter_riverpod: ^0.12.1
-  feed_finder: ^1.0.6
   http: ^0.12.2
   flutter:
     sdk: flutter
+  feed_finder:
+    git:
+      url: https://github.com/mjablecnik/feed_finder.git
+      ref: master
   webfeed:
     git:
       url: https://github.com/mjablecnik/webfeed.git

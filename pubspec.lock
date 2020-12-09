@@ -81,10 +81,12 @@ packages:
   feed_finder:
     dependency: "direct main"
     description:
-      name: feed_finder
-      url: "https://pub.dartlang.org"
-    source: hosted
-    version: "1.0.6"
+      path: "."
+      ref: master
+      resolved-ref: "8e69bff08ef7384ebced38f32c229b9bef8f57f2"
+      url: "https://github.com/mjablecnik/feed_finder.git"
+    source: git
+    version: "1.0.4"
   flutter:
     dependency: "direct main"
     description: flutter
@@ -280,7 +282,7 @@ packages:
     description:
       path: "."
       ref: master
-      resolved-ref: e300254b756dff4a3dddb249300bcee2df44cfc3
+      resolved-ref: e4bca7c18fb7791639f78f7635897e62693ab81e
       url: "https://github.com/mjablecnik/webfeed.git"
     source: git
     version: "0.6.0"

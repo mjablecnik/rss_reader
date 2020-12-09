@@ -228,7 +228,7 @@ class _RssFinder extends State<RssFinder> {
       httpsUrl = "https://" + url.host + url.path;
     }
 
-    var feedUrls = await FeedFinder.scrape(httpsUrl);
+    var feedUrls = await FeedFinder.scrape(httpsUrl, parseFromBody: false, verify: false);
     if (feedUrls.isNotEmpty) {
       var client = http.Client();
       for (var url in feedUrls) {
