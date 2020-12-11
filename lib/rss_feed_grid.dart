@@ -6,7 +6,7 @@ import 'package:flutter_web_app/rss_finder.dart';
 import 'package:reorderables/reorderables.dart';
 import 'main.dart';
 
-class RssFeedListScreen extends StatelessWidget {
+class RssFeedGridScreen extends StatelessWidget {
   @override
   Widget build(BuildContext context) {
     return Scaffold(
@@ -17,7 +17,7 @@ class RssFeedListScreen extends StatelessWidget {
       body: Container(
         margin: const EdgeInsets.only(top: 30),
         padding: const EdgeInsets.all(15),
-        child: RssFeedList(),
+        child: RssFeedGrid(),
       ),
       floatingActionButton: FloatingActionButton(
         onPressed: () {
@@ -33,38 +33,12 @@ class RssFeedListScreen extends StatelessWidget {
   }
 }
 
-class RssFeedList extends StatefulWidget {
+class RssFeedGrid extends StatefulWidget {
   @override
-  _RssFeedListState createState() => _RssFeedListState();
+  _RssFeedGridState createState() => _RssFeedGridState();
 }
 
-class _RssFeedListState extends State<RssFeedList> {
-  @override
-  Widget build(BuildContext context) {
-    return Consumer(
-      builder: (context, watch, _) {
-         var _items = [
-          for (var feed in watch(feedsProvider).getFeeds())
-            Container(
-              child: Column(
-                children: [
-                  getItemImage(feed),
-                  getItemText(feed),
-                ],
-              ),
-            )
-        ];
-
-        return ReorderableWrap(
-            spacing: 8.0,
-            runSpacing: 4.0,
-            padding: const EdgeInsets.all(8),
-            children: _items,
-            onReorder: context.read(feedsProvider).reorder,
-        );
-      },
-    );
-  }
+class _RssFeedGridState extends State<RssFeedGrid> {
 
   Container getItemText(Feed feed) {
     return Container(
@@ -89,6 +63,33 @@ class _RssFeedListState extends State<RssFeedList> {
                 image: NetworkImage(feed.imageUrl != null ? feed.imageUrl : defaultImageUrl)
             )
         )
+    );
+  }
+
+  @override
+  Widget build(BuildContext context) {
+    return Consumer(
+      builder: (context, watch, _) {
+         var _items = [
+          for (var feed in watch(feedsProvider).getFeeds())
+            Container(
+              child: Column(
+                children: [
+                  getItemImage(feed),
+                  getItemText(feed),
+                ],
+              ),
+            )
+        ];
+
+        return ReorderableWrap(
+            spacing: 8.0,
+            runSpacing: 4.0,
+            padding: const EdgeInsets.all(8),
+            children: _items,
+            onReorder: context.read(feedsProvider).reorder,
+        );
+      },
     );
   }
 }
