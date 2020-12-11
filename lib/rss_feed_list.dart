@@ -59,7 +59,7 @@ class _RssFeedListState extends State<RssFeedList> {
                             shape: BoxShape.circle,
                             image: DecorationImage(
                                 fit: BoxFit.fill,
-                                image: NetworkImage(feed.image != null ? feed.image.url : defaultImageUrl)
+                                image: NetworkImage(feed.imageUrl != null ? feed.imageUrl : defaultImageUrl)
                             )
                         )
                     ),

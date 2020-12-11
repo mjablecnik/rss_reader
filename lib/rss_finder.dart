@@ -5,7 +5,6 @@ import 'package:flutter/material.dart';
 import 'package:flutter_riverpod/all.dart';
 import 'package:flutter_web_app/main.dart';
 import 'package:http/http.dart' as http;
-import 'package:webfeed/domain/rss_feed.dart';
 
 import 'rss_feed.dart';
 
@@ -23,6 +22,7 @@ class RssFinderScreen extends StatelessWidget {
       ),
       floatingActionButton: FloatingActionButton(
         onPressed: () {
+          context.read(feedsProvider).save();
           Navigator.pop(context);
         },
         child: Icon(Icons.save_alt),
@@ -110,12 +110,12 @@ class _RssFinder extends State<RssFinder> {
                               shape: BoxShape.circle,
                               image: new DecorationImage(
                                   fit: BoxFit.fill,
-                                  image: new NetworkImage(feedWrapper.feed.image != null ? feedWrapper.feed.image.url : defaultImageUrl)
+                                  image: new NetworkImage(feedWrapper.sourceFeed.image != null ? feedWrapper.sourceFeed.image.url : defaultImageUrl)
                               )
                           )
                       ),
-                      title: Text(feedWrapper.feed.title),
-                      subtitle: Text(feedWrapper.feed.link),
+                      title: Text(feedWrapper.sourceFeed.title),
+                      subtitle: Text(feedWrapper.sourceFeed.link),
                     ),
                   ),
                 ),
@@ -234,7 +234,7 @@ class _RssFinder extends State<RssFinder> {
       for (var url in feedUrls) {
         try {
           var response = await client.get(url);
-          var feed = RssFeedWrapper.create(url, response.body);
+          var feed = RssFeedWrapper.fromXml(url, response.body);
           setState(() {
             _feeds.add(feed);
           });

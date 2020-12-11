@@ -26,6 +26,9 @@ dependencies:
   flutter_inappwebview: ^4.0.0+4
   flutter_riverpod: ^0.12.1
   http: ^0.12.2
+  hive: ^1.4.4+1
+  hive_flutter: ^0.3.1
+  path_provider: ^1.6.24
   flutter:
     sdk: flutter
   feed_finder:
@@ -43,6 +46,8 @@ dependencies:
   cupertino_icons: ^1.0.0
 
 dev_dependencies:
+  hive_generator: ^0.8.2
+  build_runner: ^1.10.9
   flutter_test:
     sdk: flutter
 
