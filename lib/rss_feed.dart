@@ -82,6 +82,13 @@ class FeedList extends ChangeNotifier {
   bool contains(RssFeedWrapper feed) {
     return this.feedWrapperList.map((e) => e.sourceUrl).contains(feed.sourceUrl);
   }
+  
+  void reorder(int oldIndex, int newIndex) {
+    var item = this.feedWrapperList.removeAt(oldIndex);
+    this.feedWrapperList.insert(newIndex, item);
+    notifyListeners();
+    this.save();
+  }
 
   void remove(RssFeedWrapper feed) {
     this.feedWrapperList.removeWhere((e) => e.sourceUrl == feed.sourceUrl);

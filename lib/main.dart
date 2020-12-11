@@ -19,7 +19,7 @@ Future main() async {
   Hive
     ..init(directory.path)
     ..registerAdapter(FeedAdapter());
-  Hive.openBox(hiveBoxName);
+  await Hive.openBox(hiveBoxName);
 
   runApp(
     ProviderScope(

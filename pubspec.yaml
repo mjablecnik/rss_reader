@@ -29,6 +29,7 @@ dependencies:
   hive: ^1.4.4+1
   hive_flutter: ^0.3.1
   path_provider: ^1.6.24
+  reorderables: ^0.3.2
   flutter:
     sdk: flutter
   feed_finder:
