@@ -1,6 +1,6 @@
 import 'package:flutter/material.dart';
 
-import 'browser.dart';
+import 'browser_screen.dart';
 
 class UrlFormScreen extends StatelessWidget {
   @override
@@ -27,6 +27,7 @@ class UrlFormScreen extends StatelessWidget {
   }
 }
 
+
 class UrlForm extends StatefulWidget {
   final String defaultUrl;
   final Function onSubmit;
@@ -38,6 +39,7 @@ class UrlForm extends StatefulWidget {
     return _UrlForm();
   }
 }
+
 
 class _UrlForm extends State<UrlForm> {
   final _formKey = GlobalKey<FormState>();

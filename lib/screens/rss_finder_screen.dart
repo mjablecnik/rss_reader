@@ -4,9 +4,10 @@ import 'package:flutter/foundation.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_riverpod/all.dart';
 import 'package:flutter_web_app/main.dart';
+import 'package:flutter_web_app/notifiers/FeedLIstNotifier.dart';
+import 'package:flutter_web_app/widgets/builders.dart';
 import 'package:http/http.dart' as http;
 
-import 'rss_feed.dart';
 
 class RssFinderScreen extends StatelessWidget {
   @override
@@ -32,6 +33,7 @@ class RssFinderScreen extends StatelessWidget {
   }
 }
 
+
 class RssFinder extends StatefulWidget {
   RssFinder({Key key}) : super(key: key);
 
@@ -40,6 +42,7 @@ class RssFinder extends StatefulWidget {
     return _RssFinder();
   }
 }
+
 
 class _RssFinder extends State<RssFinder> {
   final _formKey = GlobalKey<FormState>();
@@ -77,49 +80,46 @@ class _RssFinder extends State<RssFinder> {
       children: <Widget>[
         for (var feedWrapper in _feeds)
           Consumer(builder: (context, watch, _) {
-            return Container(
-            //color: context.read(feedsProvider).contains(rssFeed) ? Colors.lightBlueAccent : Colors.white,
-            child: Row(
-              children: [
-                Checkbox(
-                  value: watch(feedsProvider).contains(feedWrapper),
-                  onChanged: (bool checked) {
-                    var allFeeds = context.read(feedsProvider);
-                    if (checked) {
-                      allFeeds.add(feedWrapper);
-                    } else {
-                      allFeeds.remove(feedWrapper);
-                    }
+
+            final itemCheckbox = Checkbox(
+                value: watch(feedsProvider).contains(feedWrapper),
+                onChanged: (bool checked) {
+                  var allFeeds = context.read(feedsProvider);
+                  if (checked) {
+                    allFeeds.add(feedWrapper);
+                  } else {
+                    allFeeds.remove(feedWrapper);
                   }
-                ),
-                Expanded(
-                  child: GestureDetector(
-                    onTap: () {
-                      var allFeeds = context.read(feedsProvider);
-                      if (allFeeds.contains(feedWrapper)) {
-                        allFeeds.remove(feedWrapper);
-                      } else {
-                        allFeeds.add(feedWrapper);
-                      }
-                    },
-                    child: ListTile(
-                      leading: new Container(
-                          width: 60.0,
-                          height: 60.0,
-                          decoration: new BoxDecoration(
-                              shape: BoxShape.circle,
-                              image: new DecorationImage(
-                                  fit: BoxFit.fill,
-                                  image: new NetworkImage(feedWrapper.sourceFeed.image != null ? feedWrapper.sourceFeed.image.url : defaultImageUrl)
-                              )
-                          )
-                      ),
-                      title: Text(feedWrapper.sourceFeed.title),
-                      subtitle: Text(feedWrapper.sourceFeed.link),
-                    ),
+                });
+
+            final itemText = Expanded(
+              child: GestureDetector(
+                onTap: () {
+                  var allFeeds = context.read(feedsProvider);
+                  if (allFeeds.contains(feedWrapper)) {
+                    allFeeds.remove(feedWrapper);
+                  } else {
+                    allFeeds.add(feedWrapper);
+                  }
+                },
+                child: ListTile(
+                  leading: new Container(
+                      width: 60.0,
+                      height: 60.0,
+                      decoration: buildItemDecoration(feedWrapper.getFeed())
                   ),
+                  title: Text(feedWrapper.getFeed().title),
+                  subtitle: Text(feedWrapper.getFeed().originalUrl),
                 ),
-            ]),
+              ),
+            );
+
+            return Container(
+              //color: context.read(feedsProvider).contains(rssFeed) ? Colors.lightBlueAccent : Colors.white,
+              child: Row(children: [
+                itemCheckbox,
+                itemText,
+              ]),
             );
           }),
       ],
@@ -192,12 +192,10 @@ class _RssFinder extends State<RssFinder> {
           if (!_isLoading) {
             return Container(
               constraints: BoxConstraints(maxWidth: 48, maxHeight: 48),
-              padding:
-              const EdgeInsets.only(top: 8, left: 9, bottom: 8, right: 9),
+              padding: const EdgeInsets.only(top: 8, left: 9, bottom: 8, right: 9),
               margin: const EdgeInsets.all(10),
               child: Icon(Icons.search, size: 20, color: Colors.white),
-              decoration: BoxDecoration(
-                  color: Colors.blue, borderRadius: BorderRadius.circular(5)),
+              decoration: BoxDecoration(color: Colors.blue, borderRadius: BorderRadius.circular(5)),
             );
           } else {
             return Container(

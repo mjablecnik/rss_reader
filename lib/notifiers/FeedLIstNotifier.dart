@@ -1,41 +1,16 @@
 import 'package:flutter/material.dart';
+import 'package:flutter_web_app/models/rss_feed.dart';
 import 'package:hive/hive.dart';
-import 'package:webfeed/domain/rss_feed.dart';
+import 'package:webfeed/webfeed.dart';
 
-import 'main.dart';
-
-part 'rss_feed.g.dart';
-
-@HiveType(typeId: 1)
-class Feed extends HiveObject {
-  @HiveField(0)
-  String title;
-
-  @HiveField(1)
-  String description;
-
-  @HiveField(2)
-  String sourceUrl;
-
-  @HiveField(3)
-  String imageUrl;
-
-  @HiveField(4)
-  String lastPubDate;
-
-  @HiveField(5)
-  bool read = false;
-
-  Feed (this.title, this.description, this.sourceUrl, this.imageUrl, this.lastPubDate);
-}
-
+import '../main.dart';
 
 
 class RssFeedWrapper {
 
   String sourceUrl;
   RssFeed sourceFeed;
-  Feed feed;
+  Feed _feed;
 
   RssFeedWrapper({sourceUrl, feed}) {
     this.sourceUrl = sourceUrl;
@@ -45,25 +20,27 @@ class RssFeedWrapper {
   factory RssFeedWrapper.fromXml(String sourceUrl, String sourceXml) {
     return RssFeedWrapper(sourceUrl: sourceUrl, feed: RssFeed.parse(sourceXml));
   }
-  
+
   factory RssFeedWrapper.fromFeed(Feed feed) {
-    return RssFeedWrapper()..feed = feed;
+    return RssFeedWrapper().._feed = feed;
   }
-  
+
   Feed getFeed() {
-    if (feed == null) {
+    if (_feed == null) {
       return new Feed(
           sourceFeed.title,
           sourceFeed.description,
           this.sourceUrl,
           sourceFeed.image != null ? sourceFeed.image.url : defaultImageUrl,
-          sourceFeed.pubDate.toString()
+          sourceFeed.pubDate.toString(),
+          sourceFeed.link
       );
     } else {
-      return feed;
+      return _feed;
     }
   }
 }
+
 
 class FeedList extends ChangeNotifier {
 
@@ -82,7 +59,7 @@ class FeedList extends ChangeNotifier {
   bool contains(RssFeedWrapper feed) {
     return this.feedWrapperList.map((e) => e.sourceUrl).contains(feed.sourceUrl);
   }
-  
+
   void reorder(int oldIndex, int newIndex) {
     var item = this.feedWrapperList.removeAt(oldIndex);
     this.feedWrapperList.insert(newIndex, item);

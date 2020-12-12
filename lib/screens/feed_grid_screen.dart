@@ -1,12 +1,13 @@
 import 'package:flutter/cupertino.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_riverpod/all.dart';
-import 'package:flutter_web_app/rss_feed.dart';
-import 'package:flutter_web_app/rss_finder.dart';
+import 'package:flutter_web_app/models/rss_feed.dart';
+import 'package:flutter_web_app/screens/rss_finder_screen.dart';
+import 'package:flutter_web_app/widgets/builders.dart';
 import 'package:reorderables/reorderables.dart';
-import 'main.dart';
+import '../main.dart';
 
-class RssFeedGridScreen extends StatelessWidget {
+class FeedGridScreen extends StatelessWidget {
   @override
   Widget build(BuildContext context) {
     return Scaffold(
@@ -17,7 +18,7 @@ class RssFeedGridScreen extends StatelessWidget {
       body: Container(
         margin: const EdgeInsets.only(top: 30),
         padding: const EdgeInsets.all(15),
-        child: RssFeedGrid(),
+        child: FeedGrid(),
       ),
       floatingActionButton: FloatingActionButton(
         onPressed: () {
@@ -33,12 +34,14 @@ class RssFeedGridScreen extends StatelessWidget {
   }
 }
 
-class RssFeedGrid extends StatefulWidget {
+
+class FeedGrid extends StatefulWidget {
   @override
-  _RssFeedGridState createState() => _RssFeedGridState();
+  _FeedGridState createState() => _FeedGridState();
 }
 
-class _RssFeedGridState extends State<RssFeedGrid> {
+
+class _FeedGridState extends State<FeedGrid> {
 
   Container getItemText(Feed feed) {
     return Container(
@@ -56,13 +59,7 @@ class _RssFeedGridState extends State<RssFeedGrid> {
     return Container(
         width: 60.0,
         height: 60.0,
-        decoration: BoxDecoration(
-            shape: BoxShape.circle,
-            image: DecorationImage(
-                fit: BoxFit.fill,
-                image: NetworkImage(feed.imageUrl != null ? feed.imageUrl : defaultImageUrl)
-            )
-        )
+        decoration: buildItemDecoration(feed)
     );
   }
 

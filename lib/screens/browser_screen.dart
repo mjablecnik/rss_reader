@@ -1,7 +1,7 @@
 import 'package:flutter/material.dart';
 import 'package:flutter/rendering.dart';
 import 'package:flutter_inappwebview/flutter_inappwebview.dart';
-import 'package:flutter_web_app/url_form.dart';
+import 'package:flutter_web_app/screens/url_form_screen.dart';
 
 
 class BrowserScreen extends StatelessWidget {
@@ -30,6 +30,7 @@ class BrowserScreen extends StatelessWidget {
   }
 }
 
+
 class Browser extends StatefulWidget {
 
   String url;
@@ -40,6 +41,7 @@ class Browser extends StatefulWidget {
   _BrowserState createState() => new _BrowserState();
 
 }
+
 
 class _BrowserState extends State<Browser> {
 

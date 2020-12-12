@@ -1,11 +1,12 @@
 import 'dart:async';
 import 'package:flutter/material.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
-import 'package:flutter_web_app/rss_feed_grid.dart';
+import 'package:flutter_web_app/screens/feed_grid_screen.dart';
 import 'package:hive/hive.dart';
 import 'package:path_provider/path_provider.dart';
 
-import 'rss_feed.dart';
+import 'models/rss_feed.dart';
+import 'notifiers/FeedLIstNotifier.dart';
 
 
 final feedsProvider = ChangeNotifierProvider<FeedList>((ref) => FeedList());
@@ -24,7 +25,7 @@ Future main() async {
   runApp(
     ProviderScope(
       child: MaterialApp(
-        home: RssFeedGridScreen()
+        home: FeedGridScreen()
       ),
     )
   );
