@@ -22,28 +22,26 @@ class FeedAdapter extends TypeAdapter<Feed> {
       fields[2] as String,
       fields[3] as String,
       fields[4] as String,
-      fields[6] as String,
-    )..read = fields[5] as bool;
+      fields[5] as DateTime,
+    );
   }
 
   @override
   void write(BinaryWriter writer, Feed obj) {
     writer
-      ..writeByte(7)
+      ..writeByte(6)
       ..writeByte(0)
       ..write(obj.title)
       ..writeByte(1)
       ..write(obj.description)
       ..writeByte(2)
-      ..write(obj.sourceUrl)
+      ..write(obj.originalUrl)
       ..writeByte(3)
-      ..write(obj.imageUrl)
+      ..write(obj.sourceUrl)
       ..writeByte(4)
-      ..write(obj.lastPubDate)
+      ..write(obj.imageUrl)
       ..writeByte(5)
-      ..write(obj.read)
-      ..writeByte(6)
-      ..write(obj.originalUrl);
+      ..write(obj.lastPubDate);
   }
 
   @override

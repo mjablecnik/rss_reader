@@ -1,4 +1,7 @@
 import 'package:hive/hive.dart';
+import 'package:webfeed/domain/rss_feed.dart';
+
+import '../main.dart';
 
 part 'rss_feed.g.dart';
 
@@ -11,19 +14,30 @@ class Feed extends HiveObject {
   String description;
 
   @HiveField(2)
-  String sourceUrl;
-
-  @HiveField(3)
-  String imageUrl;
-
-  @HiveField(4)
-  String lastPubDate;
-
-  @HiveField(5)
-  bool read = false;
-
-  @HiveField(6)
   String originalUrl;
 
-  Feed (this.title, this.description, this.sourceUrl, this.imageUrl, this.lastPubDate, this.originalUrl);
+  @HiveField(3)
+  String sourceUrl;
+
+  @HiveField(4)
+  String imageUrl;
+
+  @HiveField(5)
+  DateTime lastPubDate;
+
+
+  Feed (this.title, this.description, this.originalUrl, this.sourceUrl, this.imageUrl, this.lastPubDate);
+
+
+  factory Feed.fromXml(String sourceUrl, String sourceXml) {
+    var sourceFeed = RssFeed.parse(sourceXml);
+    return new Feed(
+        sourceFeed.title,
+        sourceFeed.description,
+        sourceFeed.link,
+        sourceUrl,
+        sourceFeed.image != null ? sourceFeed.image.url : defaultImageUrl,
+        sourceFeed.pubDate
+    );
+  }
 }

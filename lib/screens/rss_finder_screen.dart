@@ -4,6 +4,7 @@ import 'package:flutter/foundation.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_riverpod/all.dart';
 import 'package:flutter_web_app/main.dart';
+import 'package:flutter_web_app/models/rss_feed.dart';
 import 'package:flutter_web_app/notifiers/FeedLIstNotifier.dart';
 import 'package:flutter_web_app/widgets/builders.dart';
 import 'package:http/http.dart' as http;
@@ -49,7 +50,7 @@ class _RssFinder extends State<RssFinder> {
   TextEditingController _controller = TextEditingController();
   bool _showHiddingIcon = true;
   bool _isLoading = false;
-  List<RssFeedWrapper> _feeds = [];
+  List<Feed> _feeds = [];
 
   @override
   void initState() {
@@ -78,17 +79,17 @@ class _RssFinder extends State<RssFinder> {
   ListView getRssFeedList() {
     return ListView(
       children: <Widget>[
-        for (var feedWrapper in _feeds)
+        for (var feed in _feeds)
           Consumer(builder: (context, watch, _) {
 
             final itemCheckbox = Checkbox(
-                value: watch(feedsProvider).contains(feedWrapper),
+                value: watch(feedsProvider).contains(feed),
                 onChanged: (bool checked) {
                   var allFeeds = context.read(feedsProvider);
                   if (checked) {
-                    allFeeds.add(feedWrapper);
+                    allFeeds.add(feed);
                   } else {
-                    allFeeds.remove(feedWrapper);
+                    allFeeds.remove(feed);
                   }
                 });
 
@@ -96,20 +97,20 @@ class _RssFinder extends State<RssFinder> {
               child: GestureDetector(
                 onTap: () {
                   var allFeeds = context.read(feedsProvider);
-                  if (allFeeds.contains(feedWrapper)) {
-                    allFeeds.remove(feedWrapper);
+                  if (allFeeds.contains(feed)) {
+                    allFeeds.remove(feed);
                   } else {
-                    allFeeds.add(feedWrapper);
+                    allFeeds.add(feed);
                   }
                 },
                 child: ListTile(
                   leading: new Container(
                       width: 60.0,
                       height: 60.0,
-                      decoration: buildItemDecoration(feedWrapper.getFeed())
+                      decoration: buildItemDecoration(feed)
                   ),
-                  title: Text(feedWrapper.getFeed().title),
-                  subtitle: Text(feedWrapper.getFeed().originalUrl),
+                  title: Text(feed.title),
+                  subtitle: Text(feed.originalUrl),
                 ),
               ),
             );
@@ -232,7 +233,7 @@ class _RssFinder extends State<RssFinder> {
       for (var url in feedUrls) {
         try {
           var response = await client.get(url);
-          var feed = RssFeedWrapper.fromXml(url, response.body);
+          var feed = Feed.fromXml(url, response.body);
           setState(() {
             _feeds.add(feed);
           });

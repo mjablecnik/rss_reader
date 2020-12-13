@@ -1,79 +1,42 @@
 import 'package:flutter/material.dart';
 import 'package:flutter_web_app/models/rss_feed.dart';
 import 'package:hive/hive.dart';
-import 'package:webfeed/webfeed.dart';
 
 import '../main.dart';
 
 
-class RssFeedWrapper {
-
-  String sourceUrl;
-  RssFeed sourceFeed;
-  Feed _feed;
-
-  RssFeedWrapper({sourceUrl, feed}) {
-    this.sourceUrl = sourceUrl;
-    this.sourceFeed = feed;
-  }
-
-  factory RssFeedWrapper.fromXml(String sourceUrl, String sourceXml) {
-    return RssFeedWrapper(sourceUrl: sourceUrl, feed: RssFeed.parse(sourceXml));
-  }
-
-  factory RssFeedWrapper.fromFeed(Feed feed) {
-    return RssFeedWrapper().._feed = feed;
-  }
-
-  Feed getFeed() {
-    if (_feed == null) {
-      return new Feed(
-          sourceFeed.title,
-          sourceFeed.description,
-          this.sourceUrl,
-          sourceFeed.image != null ? sourceFeed.image.url : defaultImageUrl,
-          sourceFeed.pubDate.toString(),
-          sourceFeed.link
-      );
-    } else {
-      return _feed;
-    }
-  }
-}
-
-
 class FeedList extends ChangeNotifier {
 
-  List<RssFeedWrapper> feedWrapperList;
+  List<Feed> feedList;
 
   FeedList() {
-    feedWrapperList = [];
+    feedList = [];
     this.load();
   }
 
-  void add(RssFeedWrapper feed) {
-    this.feedWrapperList.add(feed);
+  void add(Feed feed) {
+    this.feedList.add(feed);
     notifyListeners();
   }
 
-  bool contains(RssFeedWrapper feed) {
-    return this.feedWrapperList.map((e) => e.sourceUrl).contains(feed.sourceUrl);
+  bool contains(Feed feed) {
+    return this.feedList.map((e) => e.sourceUrl).contains(feed.sourceUrl);
   }
 
   void reorder(int oldIndex, int newIndex) {
-    var item = this.feedWrapperList.removeAt(oldIndex);
-    this.feedWrapperList.insert(newIndex, item);
+    var item = this.feedList.removeAt(oldIndex);
+    this.feedList.insert(newIndex, item);
     notifyListeners();
     this.save();
   }
 
-  void remove(RssFeedWrapper feed) {
-    this.feedWrapperList.removeWhere((e) => e.sourceUrl == feed.sourceUrl);
+  void remove(Feed feed) {
+    this.feedList.removeWhere((e) => e.sourceUrl == feed.sourceUrl);
     notifyListeners();
   }
 
   List<Feed> getFeeds() {
-    return feedWrapperList.map((e) => e.getFeed()).toList();
+    return feedList;
   }
 
   void save() {
@@ -86,10 +49,6 @@ class FeedList extends ChangeNotifier {
 
   Future<void> load() async {
     var box = Hive.box(hiveBoxName);
-    var feeds = List<Feed>.from(box.get('feeds') ?? []);
-    feedWrapperList = [
-      for (var feed in feeds)
-        RssFeedWrapper.fromFeed(feed)
-    ];
+    feedList = List<Feed>.from(box.get('feeds') ?? []);
   }
 }
