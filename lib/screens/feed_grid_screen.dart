@@ -1,7 +1,8 @@
 import 'package:flutter/cupertino.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_riverpod/all.dart';
-import 'package:flutter_web_app/models/rss_feed.dart';
+import 'package:flutter_web_app/models/feed.dart';
+import 'package:flutter_web_app/screens/article_list_screen.dart';
 import 'package:flutter_web_app/screens/rss_finder_screen.dart';
 import 'package:flutter_web_app/widgets/builders.dart';
 import 'package:reorderables/reorderables.dart';
@@ -67,14 +68,22 @@ class _FeedGridState extends State<FeedGrid> {
   Widget build(BuildContext context) {
     return Consumer(
       builder: (context, watch, _) {
-         var _items = [
+        var _items = [
           for (var feed in watch(feedsProvider).getFeeds())
-            Container(
-              child: Column(
-                children: [
-                  getItemImage(feed),
-                  getItemText(feed),
-                ],
+            GestureDetector(
+              onTap: () {
+                Navigator.push(
+                  context,
+                  MaterialPageRoute(builder: (context) => ArticleListScreen(currentFeed: feed)),
+                );
+              },
+              child: Container(
+                child: Column(
+                  children: [
+                    getItemImage(feed),
+                    getItemText(feed),
+                  ],
+                ),
               ),
             )
         ];

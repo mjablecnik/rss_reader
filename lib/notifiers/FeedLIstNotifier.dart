@@ -1,5 +1,6 @@
 import 'package:flutter/material.dart';
-import 'package:flutter_web_app/models/rss_feed.dart';
+import 'package:flutter_web_app/models/article.dart';
+import 'package:flutter_web_app/models/feed.dart';
 import 'package:hive/hive.dart';
 
 import '../main.dart';
@@ -7,48 +8,64 @@ import '../main.dart';
 
 class FeedList extends ChangeNotifier {
 
-  List<Feed> feedList;
+  List<Feed> _feedList;
 
   FeedList() {
-    feedList = [];
+    _feedList = [];
     this.load();
   }
 
   void add(Feed feed) {
-    this.feedList.add(feed);
+    this._feedList.add(feed);
     notifyListeners();
   }
 
   bool contains(Feed feed) {
-    return this.feedList.map((e) => e.sourceUrl).contains(feed.sourceUrl);
+    return this._feedList.map((e) => e.sourceUrl).contains(feed.sourceUrl);
   }
 
   void reorder(int oldIndex, int newIndex) {
-    var item = this.feedList.removeAt(oldIndex);
-    this.feedList.insert(newIndex, item);
+    var item = this._feedList.removeAt(oldIndex);
+    this._feedList.insert(newIndex, item);
     notifyListeners();
-    this.save();
+    this.save(withArticles: false);
   }
 
   void remove(Feed feed) {
-    this.feedList.removeWhere((e) => e.sourceUrl == feed.sourceUrl);
+    this._feedList.removeWhere((e) => e.sourceUrl == feed.sourceUrl);
     notifyListeners();
   }
 
   List<Feed> getFeeds() {
-    return feedList;
+    return _feedList;
   }
 
-  void save() {
+  void save({ bool withArticles = true }) {
     var box = Hive.box(hiveBoxName);
-    var feeds = this.getFeeds();
-
-    box.put('feeds', feeds);
+    box.put('feeds', this._feedList);
+    if (withArticles) {
+      this._feedList.forEach(saveArticles);
+    }
     this.load();
   }
 
   Future<void> load() async {
     var box = Hive.box(hiveBoxName);
-    feedList = List<Feed>.from(box.get('feeds') ?? []);
+    this._feedList = List<Feed>.from(box.get('feeds') ?? []);
+    this._feedList.forEach(loadArticles);
+  }
+
+  void saveArticles(Feed feed) {
+    var hiveArticleListKey = "feed:${feed.sourceUrl}:article";
+    var box = Hive.box(hiveBoxName);
+
+    box.put(hiveArticleListKey, feed.articles);
+  }
+
+  Future<void> loadArticles(Feed feed) async {
+    var hiveArticleListKey = "feed:${feed.sourceUrl}:article";
+    var box = Hive.box(hiveBoxName);
+
+    feed.articles = List<Article>.from(box.get(hiveArticleListKey) ?? []);
   }
 }

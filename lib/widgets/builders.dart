@@ -1,6 +1,6 @@
 
 import 'package:flutter/material.dart';
-import 'package:flutter_web_app/models/rss_feed.dart';
+import 'package:flutter_web_app/models/feed.dart';
 
 import '../main.dart';
 

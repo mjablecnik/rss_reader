@@ -1,9 +1,10 @@
+import 'package:flutter_web_app/models/article.dart';
 import 'package:hive/hive.dart';
 import 'package:webfeed/domain/rss_feed.dart';
 
 import '../main.dart';
 
-part 'rss_feed.g.dart';
+part 'feed.g.dart';
 
 @HiveType(typeId: 1)
 class Feed extends HiveObject {
@@ -25,13 +26,14 @@ class Feed extends HiveObject {
   @HiveField(5)
   DateTime lastPubDate;
 
+  List<Article> articles;
 
   Feed (this.title, this.description, this.originalUrl, this.sourceUrl, this.imageUrl, this.lastPubDate);
 
 
   factory Feed.fromXml(String sourceUrl, String sourceXml) {
     var sourceFeed = RssFeed.parse(sourceXml);
-    return new Feed(
+    var feed = new Feed(
         sourceFeed.title,
         sourceFeed.description,
         sourceFeed.link,
@@ -39,5 +41,11 @@ class Feed extends HiveObject {
         sourceFeed.image != null ? sourceFeed.image.url : defaultImageUrl,
         sourceFeed.pubDate
     );
+
+    feed.articles = [
+      for (var item in sourceFeed.items)
+        Article(item.title, item.description, item.link, item.enclosure.url, item.pubDate)
+    ];
+    return feed;
   }
 }

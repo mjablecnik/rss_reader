@@ -5,7 +5,8 @@ import 'package:flutter_web_app/screens/feed_grid_screen.dart';
 import 'package:hive/hive.dart';
 import 'package:path_provider/path_provider.dart';
 
-import 'models/rss_feed.dart';
+import 'models/article.dart';
+import 'models/feed.dart';
 import 'notifiers/FeedLIstNotifier.dart';
 
 
@@ -19,7 +20,9 @@ Future main() async {
   final directory = await getApplicationDocumentsDirectory();
   Hive
     ..init(directory.path)
-    ..registerAdapter(FeedAdapter());
+    ..registerAdapter(FeedAdapter())
+    ..registerAdapter(ArticleAdapter());
+
   await Hive.openBox(hiveBoxName);
 
   runApp(
