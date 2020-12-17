@@ -5,7 +5,6 @@ import 'package:flutter/material.dart';
 import 'package:flutter_riverpod/all.dart';
 import 'package:flutter_web_app/main.dart';
 import 'package:flutter_web_app/models/feed.dart';
-import 'package:flutter_web_app/notifiers/FeedLIstNotifier.dart';
 import 'package:flutter_web_app/widgets/builders.dart';
 import 'package:http/http.dart' as http;
 

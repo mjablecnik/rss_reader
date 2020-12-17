@@ -7,7 +7,7 @@ import 'package:path_provider/path_provider.dart';
 
 import 'models/article.dart';
 import 'models/feed.dart';
-import 'notifiers/FeedLIstNotifier.dart';
+import 'notifiers/feed_list_notifier.dart';
 
 
 final feedsProvider = ChangeNotifierProvider<FeedList>((ref) => FeedList());
