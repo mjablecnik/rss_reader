@@ -6,7 +6,7 @@ import '../main.dart';
 
 
 BoxDecoration buildItemDecoration(Feed feed) {
-  return new BoxDecoration(
+  return BoxDecoration(
       shape: BoxShape.circle,
       image: new DecorationImage(
           fit: BoxFit.fill,

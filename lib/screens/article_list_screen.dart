@@ -1,55 +1,94 @@
+import 'package:intl/intl.dart';
 import 'package:flutter/material.dart';
+import 'package:flutter/rendering.dart';
 import 'package:flutter_web_app/models/article.dart';
 import 'package:flutter_web_app/models/feed.dart';
 
 
 class ArticleListScreen extends StatelessWidget {
 
-  Feed currentFeed;
+  final Feed currentFeed;
 
-  ArticleListScreen ({ Key key, this.currentFeed }): super(key: key);
+  ArticleListScreen({Key key, this.currentFeed}) : super(key: key);
 
   @override
   Widget build(BuildContext context) {
     return Scaffold(
       appBar: AppBar(
-        title: Text("Articles"),
+        title: Text(this.currentFeed.title),
       ),
-      body: Container(
-        margin: const EdgeInsets.only(top: 30),
-        padding: const EdgeInsets.all(15),
-        child: ArticleList(articles: currentFeed.articles),
-      ),
+      body: ArticleList(articles: currentFeed.articles),
     );
   }
 }
 
-
 class ArticleList extends StatefulWidget {
+  final List<Article> articles;
 
-  List<Article> articles;
-
-  ArticleList ({ Key key, this.articles }): super(key: key);
+  ArticleList({Key key, this.articles}) : super(key: key);
 
   @override
   _ArticleListState createState() => _ArticleListState();
 }
 
-
 class _ArticleListState extends State<ArticleList> {
   @override
   Widget build(BuildContext context) {
     return ListView(
-      padding: const EdgeInsets.all(8),
+      padding: const EdgeInsets.all(12),
       children: <Widget>[
         for (var article in widget.articles)
           Container(
-            height: 50,
-            color: Colors.amber[600],
-            child: Center(child: Text(article.title)),
+            decoration: BoxDecoration(
+              color: Colors.white,
+              border: Border.all(width: 1, color: Color.fromRGBO(191, 191, 191, 0.3)),
+              borderRadius: BorderRadius.circular(7)
+            ),
+            margin: EdgeInsets.only(top: 5, bottom: 10),
+              height: 150,
+              child: Row(
+                children: [
+                  Container(
+                      width: 200,
+                      child: Container(
+                        padding: EdgeInsets.all(15),
+                        child: Column(
+                          children: [
+                            Align(
+                              alignment: Alignment.topLeft,
+                              child: Text(
+                                  article.title,
+                                  style: TextStyle(fontWeight: FontWeight.bold)
+                              ),
+                            ),
+                            Spacer(),
+                            Align(
+                              alignment: Alignment.bottomLeft,
+                              child: Text(
+                                  DateFormat('HH:mm   dd.MM. yyyy').format(article.pubDate),
+                                  style: TextStyle(color: Colors.grey)
+                              ),
+                            ),
+                          ],
+                        )
+                      )
+                  ),
+                  Spacer(),
+                  Container(
+                      width: 150,
+                      height: 150,
+                      decoration: BoxDecoration(
+                        borderRadius: BorderRadius.only(topRight: Radius.circular(7), bottomRight: Radius.circular(7)),
+                          image: DecorationImage(
+                              fit: BoxFit.fitHeight,
+                              image: NetworkImage(article.imageUrl)
+                          )
+                      )
+                  ),
+                ],
+              ),
           ),
       ],
     );
   }
 }
-
