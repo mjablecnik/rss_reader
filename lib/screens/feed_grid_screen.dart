@@ -1,12 +1,12 @@
 import 'package:flutter/cupertino.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_riverpod/all.dart';
+import 'package:flutter_web_app/main.dart';
 import 'package:flutter_web_app/models/feed.dart';
 import 'package:flutter_web_app/screens/article_list_screen.dart';
 import 'package:flutter_web_app/screens/rss_finder_screen.dart';
 import 'package:flutter_web_app/widgets/builders.dart';
 import 'package:reorderables/reorderables.dart';
-import '../main.dart';
 
 class FeedGridScreen extends StatelessWidget {
   @override
@@ -17,7 +17,7 @@ class FeedGridScreen extends StatelessWidget {
       ),
       resizeToAvoidBottomInset: false,
       body: Container(
-        margin: const EdgeInsets.only(top: 30),
+        margin: const EdgeInsets.only(top: 15),
         padding: const EdgeInsets.all(15),
         child: FeedGrid(),
       ),
@@ -46,11 +46,13 @@ class _FeedGridState extends State<FeedGrid> {
 
   Container getItemText(Feed feed) {
     return Container(
-      width: 80,
-      alignment: Alignment.center,
-      padding: EdgeInsets.only(top: 6),
+      width: 60,
+      alignment: Alignment.centerRight,
+      padding: EdgeInsets.only(top: 10),
       child: Text(
-          feed.title.length > 22 ? feed.title.substring(0, 19) : feed.title,
+          feed.title,
+          //feed.title.length > 22 ? feed.title.substring(0, 19) : feed.title
+          textAlign: TextAlign.center,
           style: TextStyle(fontSize: 12)
       ),
     );
@@ -89,8 +91,8 @@ class _FeedGridState extends State<FeedGrid> {
         ];
 
         return ReorderableWrap(
-            spacing: 8.0,
-            runSpacing: 4.0,
+            spacing: 22.0,
+            runSpacing: 10.0,
             padding: const EdgeInsets.all(8),
             children: _items,
             onReorder: context.read(feedsProvider).reorder,
