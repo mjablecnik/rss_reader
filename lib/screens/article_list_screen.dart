@@ -1,22 +1,24 @@
 import 'package:flutter/material.dart';
 import 'package:flutter/rendering.dart';
+import 'package:flutter_riverpod/all.dart';
+import 'package:flutter_web_app/main.dart';
 import 'package:flutter_web_app/models/article.dart';
-import 'package:flutter_web_app/models/feed.dart';
 import 'package:flutter_web_app/screens/article_detail_screen.dart';
 import 'package:intl/intl.dart';
 
 class ArticleListScreen extends StatelessWidget {
-  final Feed currentFeed;
 
-  ArticleListScreen({Key key, this.currentFeed}) : super(key: key);
+  ArticleListScreen({Key key}) : super(key: key);
 
   @override
   Widget build(BuildContext context) {
     return Scaffold(
       appBar: AppBar(
-        title: Text(this.currentFeed.title),
+        title: Text(context.read(feedsProvider).currentFeed.title),
       ),
-      body: ArticleList(articles: currentFeed.articles),
+      body: Consumer(builder: (context, watch, _) {
+        return ArticleList(articles: watch(articlesProvider).getArticles());
+      }),
     );
   }
 }
@@ -39,6 +41,9 @@ class _ArticleListState extends State<ArticleList> {
         for (var article in widget.articles)
           GestureDetector(
             onTap: () {
+              article.read = true;
+              context.read(articlesProvider).save();
+
               Navigator.push(
                 context,
                 MaterialPageRoute(builder: (context) => ArticleDetailScreen(article: article)),
@@ -107,8 +112,13 @@ class ArticleItem extends StatelessWidget {
         children: [
           Align(
             alignment: Alignment.topLeft,
-            child: Text(article.title.length < 90 ? article.title : article.title.substring(0, 90) + "...",
-                style: TextStyle(fontWeight: FontWeight.bold)),
+            child: Text(
+              article.title.length < 90 ? article.title : article.title.substring(0, 90) + "...",
+              style: TextStyle(
+                fontWeight: FontWeight.bold,
+                color: !article.read ? Colors.black : Colors.grey,
+              ),
+            ),
           ),
           Spacer(),
           Align(

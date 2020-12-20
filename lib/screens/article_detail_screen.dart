@@ -10,6 +10,7 @@ class ArticleDetailScreen extends StatelessWidget {
 
   ArticleDetailScreen({Key key, this.article}) : super(key: key);
 
+
   @override
   Widget build(BuildContext context) {
     return Scaffold(
