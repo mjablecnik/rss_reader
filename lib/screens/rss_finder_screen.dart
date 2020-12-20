@@ -1,3 +1,6 @@
+import 'dart:typed_data';
+
+import 'package:charset_converter/charset_converter.dart';
 import 'package:feed_finder/feed_finder.dart';
 import 'package:flutter/cupertino.dart';
 import 'package:flutter/foundation.dart';
@@ -231,8 +234,14 @@ class _RssFinder extends State<RssFinder> {
       var client = http.Client();
       for (var url in feedUrls) {
         try {
+          var xmlSource;
           var response = await client.get(url);
-          var feed = Feed.fromXml(url, response.body);
+          if (response.headers["content-type"].toLowerCase().contains("utf-8")) {
+            xmlSource = response.body;
+          } else {
+            xmlSource = await CharsetConverter.decode("utf8", Uint8List.fromList(response.body.codeUnits));
+          }
+          var feed = Feed.fromXml(url, xmlSource);
           setState(() {
             _feeds.add(feed);
           });
