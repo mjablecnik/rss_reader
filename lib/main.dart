@@ -7,11 +7,9 @@ import 'package:path_provider/path_provider.dart';
 
 import 'models/article.dart';
 import 'models/feed.dart';
-import 'notifiers/article_list_notifier.dart';
 import 'notifiers/feed_list_notifier.dart';
 
 final feedsProvider = ChangeNotifierProvider<FeedList>((ref) => FeedList());
-final articlesProvider = ChangeNotifierProvider<ArticleList>((ref) => ArticleList(ref.watch(feedsProvider)));
 
 String defaultImageUrl = "https://img2.pngio.com/documentation-screenshotlayer-api-default-png-250_250.png";
 String hiveBoxName = 'RssReader';

@@ -63,6 +63,11 @@ class FeedList extends ChangeNotifier {
     box.put(hiveArticleListKey, feed.articles);
   }
 
+  void saveCurrentArticles() {
+    saveArticles(currentFeed);
+    notifyListeners();
+  }
+
   Future<void> loadArticles(Feed feed) async {
     var hiveArticleListKey = "feed:${feed.sourceUrl}:article";
     var box = Hive.box(hiveBoxName);

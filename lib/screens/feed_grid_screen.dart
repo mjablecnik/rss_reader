@@ -35,34 +35,64 @@ class FeedGridScreen extends StatelessWidget {
   }
 }
 
-
 class FeedGrid extends StatefulWidget {
   @override
   _FeedGridState createState() => _FeedGridState();
 }
 
-
 class _FeedGridState extends State<FeedGrid> {
-
   Container getItemText(Feed feed) {
     return Container(
       width: 60,
       alignment: Alignment.centerRight,
       padding: EdgeInsets.only(top: 10),
       child: Text(
-          feed.title,
-          //feed.title.length > 22 ? feed.title.substring(0, 19) : feed.title
-          textAlign: TextAlign.center,
-          style: TextStyle(fontSize: 12)
+        feed.title,
+        //feed.title.length > 22 ? feed.title.substring(0, 19) : feed.title
+        textAlign: TextAlign.center,
+        style: TextStyle(fontSize: 12),
       ),
     );
   }
 
-  Container getItemImage(Feed feed) {
-    return Container(
-        width: 60.0,
-        height: 60.0,
-        decoration: buildItemDecoration(feed)
+  Stack getItemImage(Feed feed) {
+    var unreadArticlesNum = feed.articles.where((e) => !e.read).length;
+    return Stack(
+      children: <Widget>[
+        Container(
+          width: 60.0,
+          height: 60.0,
+          decoration: buildItemDecoration(feed),
+        ),
+        buildIndicator(unreadArticlesNum),
+      ],
+    );
+  }
+
+  Positioned buildIndicator(int unreadArticlesNum) {
+    if (unreadArticlesNum == 0) {
+      return Positioned(width: 0, height: 0, child: Container());
+    }
+
+    return Positioned(
+      right: 0,
+      height: 18,
+      width: 15.0 + (unreadArticlesNum.toString().length * 5.0),
+      child: Container(
+        decoration: BoxDecoration(
+          shape: BoxShape.rectangle,
+          borderRadius: BorderRadius.circular(10),
+          color: Colors.red,
+        ),
+        alignment: Alignment.center,
+        child: Text(
+          unreadArticlesNum.toString(),
+          style: TextStyle(
+            color: Colors.white,
+            fontSize: 12,
+          ),
+        ),
+      ),
     );
   }
 
@@ -75,7 +105,6 @@ class _FeedGridState extends State<FeedGrid> {
             GestureDetector(
               onTap: () {
                 context.read(feedsProvider).currentFeed = feed;
-                context.read(articlesProvider).setFeed(feed);
 
                 Navigator.push(
                   context,
@@ -94,11 +123,11 @@ class _FeedGridState extends State<FeedGrid> {
         ];
 
         return ReorderableWrap(
-            spacing: 22.0,
-            runSpacing: 10.0,
-            padding: const EdgeInsets.all(8),
-            children: _items,
-            onReorder: context.read(feedsProvider).reorder,
+          spacing: 22.0,
+          runSpacing: 10.0,
+          padding: const EdgeInsets.all(8),
+          children: _items,
+          onReorder: context.read(feedsProvider).reorder,
         );
       },
     );

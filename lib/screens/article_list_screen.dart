@@ -17,7 +17,7 @@ class ArticleListScreen extends StatelessWidget {
         title: Text(context.read(feedsProvider).currentFeed.title),
       ),
       body: Consumer(builder: (context, watch, _) {
-        return ArticleList(articles: watch(articlesProvider).getArticles());
+        return ArticleList(articles: watch(feedsProvider).currentFeed.articles);
       }),
     );
   }
@@ -42,7 +42,7 @@ class _ArticleListState extends State<ArticleList> {
           GestureDetector(
             onTap: () {
               article.read = true;
-              context.read(articlesProvider).save();
+              context.read(feedsProvider).saveCurrentArticles();
 
               Navigator.push(
                 context,
