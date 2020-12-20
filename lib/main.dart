@@ -9,7 +9,6 @@ import 'models/article.dart';
 import 'models/feed.dart';
 import 'notifiers/feed_list_notifier.dart';
 
-
 final feedsProvider = ChangeNotifierProvider<FeedList>((ref) => FeedList());
 
 String defaultImageUrl = "https://img2.pngio.com/documentation-screenshotlayer-api-default-png-250_250.png";
@@ -30,6 +29,6 @@ Future main() async {
       child: MaterialApp(
         home: FeedGridScreen()
       ),
-    )
+    ),
   );
 }
