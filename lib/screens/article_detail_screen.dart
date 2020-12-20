@@ -1,4 +1,6 @@
 import 'package:flutter/material.dart';
+import 'package:flutter_riverpod/all.dart';
+import 'package:flutter_web_app/main.dart';
 import 'package:flutter_web_app/models/article.dart';
 import 'package:flutter_web_app/screens/browser_screen.dart';
 import 'package:intl/intl.dart';
@@ -12,7 +14,7 @@ class ArticleDetailScreen extends StatelessWidget {
   Widget build(BuildContext context) {
     return Scaffold(
       appBar: AppBar(
-        title: Text(""),
+        title: Text(context.read(feedsProvider).currentFeed.title),
       ),
       body: Container(
         child: ListView(
@@ -47,8 +49,8 @@ class ArticleDetailScreen extends StatelessWidget {
             ),
             Container(
               height: 60,
-              color: Colors.white24,
               child: RaisedButton(
+                color: Colors.white24,
                 onPressed: () {
                   Navigator.push(
                     context,

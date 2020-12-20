@@ -9,6 +9,7 @@ import '../main.dart';
 class FeedList extends ChangeNotifier {
 
   List<Feed> _feedList;
+  Feed currentFeed;
 
   FeedList() {
     _feedList = [];

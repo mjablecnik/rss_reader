@@ -74,6 +74,7 @@ class _FeedGridState extends State<FeedGrid> {
           for (var feed in watch(feedsProvider).getFeeds())
             GestureDetector(
               onTap: () {
+                context.read(feedsProvider).currentFeed = feed;
                 Navigator.push(
                   context,
                   MaterialPageRoute(builder: (context) => ArticleListScreen(currentFeed: feed)),
