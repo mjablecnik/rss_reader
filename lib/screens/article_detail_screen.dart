@@ -3,6 +3,7 @@ import 'package:flutter_riverpod/all.dart';
 import 'package:flutter_web_app/main.dart';
 import 'package:flutter_web_app/models/article.dart';
 import 'package:flutter_web_app/screens/browser_screen.dart';
+import 'package:html_unescape/html_unescape.dart';
 import 'package:intl/intl.dart';
 
 class ArticleDetailScreen extends StatelessWidget {
@@ -44,7 +45,7 @@ class ArticleDetailScreen extends StatelessWidget {
             Container(
               margin: EdgeInsets.only(top: 30, bottom: 30),
               child: Text(
-                article.description,
+                HtmlUnescape().convert(article.description),
                 style: TextStyle(fontSize: 17, height: 1.4),
               ),
             ),

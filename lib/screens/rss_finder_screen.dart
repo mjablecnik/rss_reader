@@ -230,6 +230,7 @@ class _RssFinder extends State<RssFinder> {
     }
 
     var feedUrls = await FeedFinder.scrape(httpsUrl, verify: false);
+
     if (feedUrls.isNotEmpty) {
       var client = http.Client();
       for (var url in feedUrls) {
@@ -241,6 +242,7 @@ class _RssFinder extends State<RssFinder> {
           } else {
             xmlSource = await CharsetConverter.decode("utf8", Uint8List.fromList(response.body.codeUnits));
           }
+
           var feed = Feed.fromXml(url, xmlSource);
           setState(() {
             _feeds.add(feed);
