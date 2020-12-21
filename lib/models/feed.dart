@@ -78,14 +78,18 @@ class Feed extends HiveObject {
     } else {
       List<Article> newArticles = [];
       for (var article in articles) {
-        if (this._articles.where((e) => e.originalUrl == article.originalUrl).isEmpty) {
-          newArticles.add(article);
+        var myArticles = this._articles.where((e) => e.originalUrl == article.originalUrl);
+        if (myArticles.isNotEmpty) {
+          if (myArticles.first.pubDate != article.pubDate) {
+            this._articles.removeWhere((e) => e.originalUrl == article.originalUrl);
+            newArticles.add(article);
+          }
         } else {
-          break;
+          newArticles.add(article);
         }
       }
 
-      this._articles.insertAll(0, newArticles);
+      this._articles.addAll(newArticles.reversed.toList());
     }
   }
 }
