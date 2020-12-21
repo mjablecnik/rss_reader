@@ -1,5 +1,6 @@
 import 'package:flutter/material.dart';
 import 'package:flutter_web_app/models/feed.dart';
+import 'package:flutter_web_app/utils/downloader.dart';
 import 'package:hive/hive.dart';
 
 import '../main.dart';
@@ -9,6 +10,7 @@ class FeedList extends ChangeNotifier {
 
   List<Feed> _feedList;
   Feed currentFeed;
+  bool downloadingArticles = false;
 
   FeedList() {
     _feedList = [];
@@ -58,5 +60,16 @@ class FeedList extends ChangeNotifier {
   void saveCurrentArticles() {
     currentFeed.saveArticles();
     notifyListeners();
+  }
+
+  void downloadArticles() {
+    downloadingArticles = true;
+    notifyListeners();
+
+    Downloader().downloadArticles(currentFeed).then((value) {
+      currentFeed.saveArticles();
+      downloadingArticles = false;
+      notifyListeners();
+    });
   }
 }

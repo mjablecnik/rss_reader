@@ -62,4 +62,22 @@ class Feed extends HiveObject {
 
     this.articles = List<Article>.from(box.get(hiveArticleListKey) ?? []);
   }
+
+  Future<void> parseNewArticles(xmlSource) async {
+    var articles = Feed.fromXml(this.sourceUrl, xmlSource).articles;
+    if (this.articles.isEmpty) {
+      this.articles = articles;
+    } else {
+      List<Article> newArticles = [];
+      for (var article in articles) {
+        if (this.articles.where((e) => e.originalUrl == article.originalUrl).isEmpty) {
+          newArticles.add(article);
+        } else {
+          break;
+        }
+      }
+
+      this.articles.insertAll(0, newArticles);
+    }
+  }
 }

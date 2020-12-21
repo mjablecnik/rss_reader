@@ -35,7 +35,7 @@ class ArticleListScreen extends StatelessWidget {
                       context.read(feedsProvider).saveCurrentArticles();
                       break;
                     case Actions.downloadNews:
-                      print("Download articles..");
+                      context.read(feedsProvider).downloadArticles();
                       break;
                     default:
                       print("Not implemented yet.");
@@ -85,6 +85,17 @@ class _ArticleListState extends State<ArticleList> {
     return ListView(
       padding: const EdgeInsets.all(12),
       children: <Widget>[
+        () {
+          if (context.read(feedsProvider).downloadingArticles) {
+            return Container(
+              alignment: Alignment.center,
+              margin: const EdgeInsets.all(10),
+              child: SizedBox(child: CircularProgressIndicator(), width: 25, height: 25),
+            );
+          } else {
+            return Container();
+          }
+        }(),
         for (var article in widget.articles)
           GestureDetector(
             onTap: () {

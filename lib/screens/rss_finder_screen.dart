@@ -8,6 +8,7 @@ import 'package:flutter/material.dart';
 import 'package:flutter_riverpod/all.dart';
 import 'package:flutter_web_app/main.dart';
 import 'package:flutter_web_app/models/feed.dart';
+import 'package:flutter_web_app/utils/downloader.dart';
 import 'package:flutter_web_app/widgets/builders.dart';
 import 'package:http/http.dart' as http;
 
@@ -220,41 +221,12 @@ class _RssFinder extends State<RssFinder> {
 
     setState(() {
       _isLoading = true;
-      _feeds = [];
     });
 
-    var url = Uri.parse(_controller.text);
-    var httpsUrl;
-    if (url.scheme != "https") {
-      httpsUrl = "https://" + url.host + url.path;
-    }
+    _feeds = await Downloader().getFeeds(_controller.text);
 
-    var feedUrls = await FeedFinder.scrape(httpsUrl, verify: false);
-
-    if (feedUrls.isNotEmpty) {
-      var client = http.Client();
-      for (var url in feedUrls) {
-        try {
-          var xmlSource;
-          var response = await client.get(url);
-          if (response.headers["content-type"].toLowerCase().contains("utf-8")) {
-            xmlSource = response.body;
-          } else {
-            xmlSource = await CharsetConverter.decode("utf8", Uint8List.fromList(response.body.codeUnits));
-          }
-
-          var feed = Feed.fromXml(url, xmlSource);
-          setState(() {
-            _feeds.add(feed);
-          });
-        } catch (e) {
-          print("Cannot gain RssFeed for: " + url);
-        }
-      }
-      client.close();
-      setState(() {
-        _isLoading = false;
-      });
-    }
+    setState(() {
+      _isLoading = false;
+    });
   }
 }
