@@ -6,8 +6,9 @@ import 'package:flutter_web_app/models/article.dart';
 import 'package:flutter_web_app/screens/article_detail_screen.dart';
 import 'package:intl/intl.dart';
 
-class ArticleListScreen extends StatelessWidget {
+enum Actions { removeAll, readAll, downloadNews, about }
 
+class ArticleListScreen extends StatelessWidget {
   ArticleListScreen({Key key}) : super(key: key);
 
   @override
@@ -15,6 +16,52 @@ class ArticleListScreen extends StatelessWidget {
     return Scaffold(
       appBar: AppBar(
         title: Text(context.read(feedsProvider).currentFeed.title),
+        actions: [
+          Container(
+              margin: EdgeInsets.only(left: 15, right: 15),
+              child: PopupMenuButton<Actions>(
+                child: Icon(Icons.more_vert),
+                onSelected: (Actions result) {
+                  var currentFeed = context.read(feedsProvider).currentFeed;
+                  switch (result) {
+                    case Actions.removeAll:
+                      currentFeed.articles = [];
+                      context.read(feedsProvider).saveCurrentArticles();
+                      break;
+                    case Actions.readAll:
+                      currentFeed.articles.forEach((e) {
+                        e.read = true;
+                      });
+                      context.read(feedsProvider).saveCurrentArticles();
+                      break;
+                    case Actions.downloadNews:
+                      print("Download articles..");
+                      break;
+                    default:
+                      print("Not implemented yet.");
+                      break;
+                  }
+                },
+                itemBuilder: (BuildContext context) => <PopupMenuEntry<Actions>>[
+                  const PopupMenuItem<Actions>(
+                    value: Actions.removeAll,
+                    child: Text('Odstranit vše'),
+                  ),
+                  const PopupMenuItem<Actions>(
+                    value: Actions.readAll,
+                    child: Text('Označit vše jako přečtené'),
+                  ),
+                  const PopupMenuItem<Actions>(
+                    value: Actions.downloadNews,
+                    child: Text('Stáhnout nové články'),
+                  ),
+                  const PopupMenuItem<Actions>(
+                    value: Actions.about,
+                    child: Text('O aplikaci'),
+                  ),
+                ],
+              ))
+        ],
       ),
       body: Consumer(builder: (context, watch, _) {
         return ArticleList(articles: watch(feedsProvider).currentFeed.articles);
