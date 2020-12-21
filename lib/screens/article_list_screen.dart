@@ -3,10 +3,10 @@ import 'package:flutter/rendering.dart';
 import 'package:flutter_riverpod/all.dart';
 import 'package:flutter_web_app/main.dart';
 import 'package:flutter_web_app/models/article.dart';
+import 'package:flutter_web_app/utils/enums.dart';
 import 'package:flutter_web_app/screens/article_detail_screen.dart';
 import 'package:intl/intl.dart';
 
-enum Actions { removeAll, readAll, downloadNews, about }
 
 class ArticleListScreen extends StatelessWidget {
   ArticleListScreen({Key key}) : super(key: key);
@@ -19,45 +19,50 @@ class ArticleListScreen extends StatelessWidget {
         actions: [
           Container(
               margin: EdgeInsets.only(left: 15, right: 15),
-              child: PopupMenuButton<Actions>(
+              child: PopupMenuButton<ArticleActions>(
                 child: Icon(Icons.more_vert),
-                onSelected: (Actions result) {
+                onSelected: (ArticleActions result) {
                   var currentFeed = context.read(feedsProvider).currentFeed;
                   switch (result) {
-                    case Actions.removeAll:
+                    case ArticleActions.removeAll:
                       currentFeed.articles = [];
                       context.read(feedsProvider).saveCurrentArticles();
                       break;
-                    case Actions.readAll:
+                    case ArticleActions.readAll:
                       currentFeed.articles.forEach((e) {
                         e.read = true;
                       });
                       context.read(feedsProvider).saveCurrentArticles();
                       break;
-                    case Actions.downloadNews:
+                    case ArticleActions.downloadNews:
                       context.read(feedsProvider).downloadArticles();
+                      break;
+                    case ArticleActions.sort:
+                      context.read(feedsProvider).changeSort();
                       break;
                     default:
                       print("Not implemented yet.");
                       break;
                   }
                 },
-                itemBuilder: (BuildContext context) => <PopupMenuEntry<Actions>>[
-                  const PopupMenuItem<Actions>(
-                    value: Actions.removeAll,
+                itemBuilder: (BuildContext context) => <PopupMenuEntry<ArticleActions>>[
+                  const PopupMenuItem<ArticleActions>(
+                    value: ArticleActions.removeAll,
                     child: Text('Odstranit vše'),
                   ),
-                  const PopupMenuItem<Actions>(
-                    value: Actions.readAll,
+                  const PopupMenuItem<ArticleActions>(
+                    value: ArticleActions.readAll,
                     child: Text('Označit vše jako přečtené'),
                   ),
-                  const PopupMenuItem<Actions>(
-                    value: Actions.downloadNews,
+                  const PopupMenuItem<ArticleActions>(
+                    value: ArticleActions.downloadNews,
                     child: Text('Stáhnout nové články'),
                   ),
-                  const PopupMenuItem<Actions>(
-                    value: Actions.about,
-                    child: Text('O aplikaci'),
+                  PopupMenuItem<ArticleActions>(
+                    value: ArticleActions.sort,
+                    child: Text(context.read(feedsProvider).sort == Sort.newToOld
+                        ? 'Řadit od nejnovějších'
+                        : 'Řadit od nejstarších'),
                   ),
                 ],
               ))

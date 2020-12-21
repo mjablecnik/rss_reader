@@ -1,6 +1,7 @@
 import 'package:flutter/material.dart';
 import 'package:flutter_web_app/models/feed.dart';
 import 'package:flutter_web_app/utils/downloader.dart';
+import 'package:flutter_web_app/utils/enums.dart';
 import 'package:hive/hive.dart';
 
 import '../main.dart';
@@ -11,10 +12,11 @@ class FeedList extends ChangeNotifier {
   List<Feed> _feedList;
   Feed currentFeed;
   bool downloadingArticles = false;
+  Sort sort = Sort.newToOld;
 
   FeedList() {
     _feedList = [];
-    this.load();
+    this.load().then((value) => this.loadSort());
   }
 
   void add(Feed feed) {
@@ -71,5 +73,32 @@ class FeedList extends ChangeNotifier {
       downloadingArticles = false;
       notifyListeners();
     });
+  }
+
+  void changeSort() {
+    if (sort == Sort.newToOld) {
+      sort = Sort.oldToNew;
+    } else {
+      sort = Sort.newToOld;
+    }
+    this.saveSort();
+    this._feedList.forEach((e) => e.articlesSort = sort);
+    notifyListeners();
+  }
+
+
+  void saveSort() {
+    var box = Hive.box(hiveBoxName);
+    box.put('sort', this.sort.toString());
+  }
+
+  Future<void> loadSort() async {
+    var box = Hive.box(hiveBoxName);
+    this.sort = await box.get('sort') == Sort.oldToNew.toString() ? Sort.oldToNew : Sort.newToOld;
+
+    if (this.sort == Sort.newToOld) {
+      this._feedList.forEach((e) => e.articlesSort = sort);
+      notifyListeners();
+    }
   }
 }
