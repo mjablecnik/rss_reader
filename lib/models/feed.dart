@@ -48,4 +48,18 @@ class Feed extends HiveObject {
     ];
     return feed;
   }
+
+  void saveArticles() {
+    var hiveArticleListKey = "feed:${this.sourceUrl}:article";
+    var box = Hive.box(hiveBoxName);
+
+    box.put(hiveArticleListKey, this.articles);
+  }
+
+  Future<void> loadArticles() async {
+    var hiveArticleListKey = "feed:${this.sourceUrl}:article";
+    var box = Hive.box(hiveBoxName);
+
+    this.articles = List<Article>.from(box.get(hiveArticleListKey) ?? []);
+  }
 }

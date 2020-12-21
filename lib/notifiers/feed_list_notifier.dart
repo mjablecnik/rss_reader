@@ -1,5 +1,4 @@
 import 'package:flutter/material.dart';
-import 'package:flutter_web_app/models/article.dart';
 import 'package:flutter_web_app/models/feed.dart';
 import 'package:hive/hive.dart';
 
@@ -45,7 +44,7 @@ class FeedList extends ChangeNotifier {
     var box = Hive.box(hiveBoxName);
     box.put('feeds', this._feedList);
     if (withArticles) {
-      this._feedList.forEach(saveArticles);
+      this._feedList.forEach((e) => e.saveArticles());
     }
     this.load();
   }
@@ -53,25 +52,11 @@ class FeedList extends ChangeNotifier {
   Future<void> load() async {
     var box = Hive.box(hiveBoxName);
     this._feedList = List<Feed>.from(box.get('feeds') ?? []);
-    this._feedList.forEach(loadArticles);
-  }
-
-  void saveArticles(Feed feed) {
-    var hiveArticleListKey = "feed:${feed.sourceUrl}:article";
-    var box = Hive.box(hiveBoxName);
-
-    box.put(hiveArticleListKey, feed.articles);
+    this._feedList.forEach((e) => e.loadArticles());
   }
 
   void saveCurrentArticles() {
-    saveArticles(currentFeed);
+    currentFeed.saveArticles();
     notifyListeners();
-  }
-
-  Future<void> loadArticles(Feed feed) async {
-    var hiveArticleListKey = "feed:${feed.sourceUrl}:article";
-    var box = Hive.box(hiveBoxName);
-
-    feed.articles = List<Article>.from(box.get(hiveArticleListKey) ?? []);
   }
 }
