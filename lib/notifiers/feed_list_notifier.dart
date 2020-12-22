@@ -64,6 +64,23 @@ class FeedList extends ChangeNotifier {
     notifyListeners();
   }
 
+  void downloadAllArticles() {
+    downloadingArticles = true;
+    notifyListeners();
+    var downloader = Downloader();
+
+    var progress = 0;
+    for (var feed in _feedList) {
+      downloader.downloadArticles(feed).then((value) {
+        feed.saveArticles();
+        if (++progress == _feedList.length) {
+          downloadingArticles = false;
+          notifyListeners();
+        }
+      });
+    }
+  }
+
   void downloadArticles() {
     downloadingArticles = true;
     notifyListeners();

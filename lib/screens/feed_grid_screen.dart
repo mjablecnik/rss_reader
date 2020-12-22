@@ -14,6 +14,31 @@ class FeedGridScreen extends StatelessWidget {
     return Scaffold(
       appBar: AppBar(
         title: Text("Rss feeds"),
+        actions: [
+          Container(
+            margin: EdgeInsets.only(left: 15, right: 15),
+            child: Consumer(
+              builder: (ctx, watch, child) {
+                if (watch(feedsProvider).downloadingArticles) {
+                  return Container(
+                    alignment: Alignment.center,
+                    margin: EdgeInsets.only(right: 5),
+                    child: SizedBox(
+                      width: 15,
+                      height: 15,
+                      child: CircularProgressIndicator(backgroundColor: Colors.white, strokeWidth: 3),
+                    ),
+                  );
+                } else {
+                  return GestureDetector(
+                    onTap: context.read(feedsProvider).downloadAllArticles,
+                    child: Icon(Icons.refresh),
+                  );
+                }
+              },
+            ),
+          )
+        ],
       ),
       resizeToAvoidBottomInset: false,
       body: Container(
