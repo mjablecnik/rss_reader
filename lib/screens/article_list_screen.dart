@@ -82,9 +82,9 @@ class _ArticleListState extends State<ArticleList> {
               var selectedAction = await showMenu(
                 context: context,
                 position: touchPosition,
-                items: getPopupMenuItems(context),
+                items: getPopupMenuItems(context, isPositioned: true),
               );
-              context.read(feedsProvider).processArticleAction(selectedAction);
+              context.read(feedsProvider).processArticleAction(selectedAction, article: article);
             },
             child: ArticleItem(article: article),
           ),

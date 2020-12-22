@@ -33,7 +33,7 @@ class Feed extends HiveObject {
 
   Feed (this.title, this.description, this.originalUrl, this.sourceUrl, this.imageUrl, this.lastPubDate);
 
-  get articles {
+  List<Article> get articles {
     return articlesSort == Sort.newToOld ? _articles : _articles.reversed.toList();
   }
 
@@ -55,6 +55,10 @@ class Feed extends HiveObject {
         Article(item.title, item.description, item.link, item.enclosure.url, item.pubDate)
     ];
     return feed;
+  }
+
+  void removeAllReadArticles() {
+    this._articles = this._articles.where((element) => !element.read).toList();
   }
 
   void saveArticles() {

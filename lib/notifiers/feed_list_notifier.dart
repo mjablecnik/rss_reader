@@ -1,4 +1,5 @@
 import 'package:flutter/material.dart';
+import 'package:flutter_web_app/models/article.dart';
 import 'package:flutter_web_app/models/feed.dart';
 import 'package:flutter_web_app/utils/downloader.dart';
 import 'package:flutter_web_app/utils/enums.dart';
@@ -116,16 +117,32 @@ class FeedList extends ChangeNotifier {
     }
   }
 
-  processArticleAction(ArticleActions action) {
+  processArticleAction(ArticleActions action, {Article article}) {
     switch (action) {
       case ArticleActions.removeAll:
         this.currentFeed.articles = [];
         this.saveCurrentArticles();
         break;
+      case ArticleActions.removeAllRead:
+        this.currentFeed.removeAllReadArticles();
+        this.saveCurrentArticles();
+        break;
       case ArticleActions.readAll:
-        this.currentFeed.articles.forEach((e) {
-          e.read = true;
-        });
+        this.currentFeed.articles.forEach((e) => e.read = true);
+        this.saveCurrentArticles();
+        break;
+      case ArticleActions.unreadAll:
+        this.currentFeed.articles.forEach((e) => e.read = false);
+        this.saveCurrentArticles();
+        break;
+      case ArticleActions.readAllUp:
+        var index = this.currentFeed.articles.indexWhere((e) => e.originalUrl == article.originalUrl);
+        this.currentFeed.articles.sublist(0, index+1).forEach((e) => e.read = true);
+        this.saveCurrentArticles();
+        break;
+      case ArticleActions.readAllDown:
+        var index = this.currentFeed.articles.indexWhere((e) => e.originalUrl == article.originalUrl);
+        this.currentFeed.articles.sublist(index).forEach((e) => e.read = true);
         this.saveCurrentArticles();
         break;
       case ArticleActions.downloadNews:
@@ -133,9 +150,6 @@ class FeedList extends ChangeNotifier {
         break;
       case ArticleActions.sort:
         this.changeSort();
-        break;
-      default:
-        print("Not implemented yet.");
         break;
     }
   }

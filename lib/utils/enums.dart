@@ -1,4 +1,12 @@
-
 enum Sort { oldToNew, newToOld }
 
-enum ArticleActions { removeAll, readAll, downloadNews, sort }
+enum ArticleActions {
+  removeAll,
+  removeAllRead,
+  readAll,
+  unreadAll,
+  readAllUp,
+  readAllDown,
+  downloadNews,
+  sort,
+}
