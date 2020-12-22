@@ -19,58 +19,69 @@ class ArticleListScreen extends StatelessWidget {
         actions: [
           Container(
               margin: EdgeInsets.only(left: 15, right: 15),
-              child: PopupMenuButton<ArticleActions>(
-                child: Icon(Icons.more_vert),
-                onSelected: (ArticleActions result) {
-                  var currentFeed = context.read(feedsProvider).currentFeed;
-                  switch (result) {
-                    case ArticleActions.removeAll:
-                      currentFeed.articles = [];
-                      context.read(feedsProvider).saveCurrentArticles();
-                      break;
-                    case ArticleActions.readAll:
-                      currentFeed.articles.forEach((e) {
-                        e.read = true;
-                      });
-                      context.read(feedsProvider).saveCurrentArticles();
-                      break;
-                    case ArticleActions.downloadNews:
-                      context.read(feedsProvider).downloadArticles();
-                      break;
-                    case ArticleActions.sort:
-                      context.read(feedsProvider).changeSort();
-                      break;
-                    default:
-                      print("Not implemented yet.");
-                      break;
-                  }
-                },
-                itemBuilder: (BuildContext context) => <PopupMenuEntry<ArticleActions>>[
-                  const PopupMenuItem<ArticleActions>(
-                    value: ArticleActions.removeAll,
-                    child: Text('Odstranit vše'),
-                  ),
-                  const PopupMenuItem<ArticleActions>(
-                    value: ArticleActions.readAll,
-                    child: Text('Označit vše jako přečtené'),
-                  ),
-                  const PopupMenuItem<ArticleActions>(
-                    value: ArticleActions.downloadNews,
-                    child: Text('Stáhnout nové články'),
-                  ),
-                  PopupMenuItem<ArticleActions>(
-                    value: ArticleActions.sort,
-                    child: Text(context.read(feedsProvider).sort == Sort.newToOld
-                        ? 'Řadit od nejnovějších'
-                        : 'Řadit od nejstarších'),
-                  ),
-                ],
-              ))
+              child: PopupMenu())
         ],
       ),
       body: Consumer(builder: (context, watch, _) {
         return ArticleList(articles: watch(feedsProvider).currentFeed.articles);
       }),
+    );
+  }
+}
+
+class PopupMenu extends StatelessWidget {
+  const PopupMenu({
+    Key key,
+  }) : super(key: key);
+
+  @override
+  Widget build(BuildContext context) {
+    return PopupMenuButton<ArticleActions>(
+      child: Icon(Icons.more_vert),
+      onSelected: (ArticleActions result) {
+        var currentFeed = context.read(feedsProvider).currentFeed;
+        switch (result) {
+          case ArticleActions.removeAll:
+            currentFeed.articles = [];
+            context.read(feedsProvider).saveCurrentArticles();
+            break;
+          case ArticleActions.readAll:
+            currentFeed.articles.forEach((e) {
+              e.read = true;
+            });
+            context.read(feedsProvider).saveCurrentArticles();
+            break;
+          case ArticleActions.downloadNews:
+            context.read(feedsProvider).downloadArticles();
+            break;
+          case ArticleActions.sort:
+            context.read(feedsProvider).changeSort();
+            break;
+          default:
+            print("Not implemented yet.");
+            break;
+        }
+      },
+      itemBuilder: (BuildContext context) => <PopupMenuEntry<ArticleActions>>[
+        const PopupMenuItem<ArticleActions>(
+          value: ArticleActions.removeAll,
+          child: Text('Odstranit vše'),
+        ),
+        const PopupMenuItem<ArticleActions>(
+          value: ArticleActions.readAll,
+          child: Text('Označit vše jako přečtené'),
+        ),
+        const PopupMenuItem<ArticleActions>(
+          value: ArticleActions.downloadNews,
+          child: Text('Stáhnout nové články'),
+        ),
+        PopupMenuItem<ArticleActions>(
+          value: ArticleActions.sort,
+          child: Text(context.read(feedsProvider).sort == Sort.newToOld
+              ? 'Řadit od nejnovějších'
+              : 'Řadit od nejstarších'),
+        ),
+      ],
     );
   }
 }
