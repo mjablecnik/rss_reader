@@ -5,8 +5,8 @@ import 'package:flutter_web_app/main.dart';
 import 'package:flutter_web_app/models/article.dart';
 import 'package:flutter_web_app/utils/enums.dart';
 import 'package:flutter_web_app/screens/article_detail_screen.dart';
+import 'package:flutter_web_app/utils/popup_menu.dart';
 import 'package:intl/intl.dart';
-
 
 class ArticleListScreen extends StatelessWidget {
   ArticleListScreen({Key key}) : super(key: key);
@@ -18,70 +18,18 @@ class ArticleListScreen extends StatelessWidget {
         title: Text(context.read(feedsProvider).currentFeed.title),
         actions: [
           Container(
-              margin: EdgeInsets.only(left: 15, right: 15),
-              child: PopupMenu())
+            margin: EdgeInsets.only(left: 15, right: 15),
+            child: PopupMenuButton<ArticleActions>(
+              child: Icon(Icons.more_vert),
+              onSelected: context.read(feedsProvider).processArticleAction,
+              itemBuilder: (context) => getPopupMenuItems(context),
+            ),
+          ),
         ],
       ),
       body: Consumer(builder: (context, watch, _) {
         return ArticleList(articles: watch(feedsProvider).currentFeed.articles);
       }),
-    );
-  }
-}
-
-class PopupMenu extends StatelessWidget {
-  const PopupMenu({
-    Key key,
-  }) : super(key: key);
-
-  @override
-  Widget build(BuildContext context) {
-    return PopupMenuButton<ArticleActions>(
-      child: Icon(Icons.more_vert),
-      onSelected: (ArticleActions result) {
-        var currentFeed = context.read(feedsProvider).currentFeed;
-        switch (result) {
-          case ArticleActions.removeAll:
-            currentFeed.articles = [];
-            context.read(feedsProvider).saveCurrentArticles();
-            break;
-          case ArticleActions.readAll:
-            currentFeed.articles.forEach((e) {
-              e.read = true;
-            });
-            context.read(feedsProvider).saveCurrentArticles();
-            break;
-          case ArticleActions.downloadNews:
-            context.read(feedsProvider).downloadArticles();
-            break;
-          case ArticleActions.sort:
-            context.read(feedsProvider).changeSort();
-            break;
-          default:
-            print("Not implemented yet.");
-            break;
-        }
-      },
-      itemBuilder: (BuildContext context) => <PopupMenuEntry<ArticleActions>>[
-        const PopupMenuItem<ArticleActions>(
-          value: ArticleActions.removeAll,
-          child: Text('Odstranit vše'),
-        ),
-        const PopupMenuItem<ArticleActions>(
-          value: ArticleActions.readAll,
-          child: Text('Označit vše jako přečtené'),
-        ),
-        const PopupMenuItem<ArticleActions>(
-          value: ArticleActions.downloadNews,
-          child: Text('Stáhnout nové články'),
-        ),
-        PopupMenuItem<ArticleActions>(
-          value: ArticleActions.sort,
-          child: Text(context.read(feedsProvider).sort == Sort.newToOld
-              ? 'Řadit od nejnovějších'
-              : 'Řadit od nejstarších'),
-        ),
-      ],
     );
   }
 }
@@ -122,6 +70,21 @@ class _ArticleListState extends State<ArticleList> {
                 context,
                 MaterialPageRoute(builder: (context) => ArticleDetailScreen(article: article)),
               );
+            },
+            onLongPressStart: (details) async {
+              var touchPosition = RelativeRect.fromLTRB(
+                details.globalPosition.dx,
+                details.globalPosition.dy,
+                details.globalPosition.dx,
+                details.globalPosition.dy,
+              );
+
+              var selectedAction = await showMenu(
+                context: context,
+                position: touchPosition,
+                items: getPopupMenuItems(context),
+              );
+              context.read(feedsProvider).processArticleAction(selectedAction);
             },
             child: ArticleItem(article: article),
           ),

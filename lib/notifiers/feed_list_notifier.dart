@@ -6,9 +6,7 @@ import 'package:hive/hive.dart';
 
 import '../main.dart';
 
-
 class FeedList extends ChangeNotifier {
-
   List<Feed> _feedList;
   Feed currentFeed;
   bool downloadingArticles = false;
@@ -44,7 +42,7 @@ class FeedList extends ChangeNotifier {
     return _feedList;
   }
 
-  void save({ bool withArticles = true }) {
+  void save({bool withArticles = true}) {
     var box = Hive.box(hiveBoxName);
     box.put('feeds', this._feedList);
     if (withArticles) {
@@ -103,7 +101,6 @@ class FeedList extends ChangeNotifier {
     notifyListeners();
   }
 
-
   void saveSort() {
     var box = Hive.box(hiveBoxName);
     box.put('sort', this.sort.toString());
@@ -116,6 +113,30 @@ class FeedList extends ChangeNotifier {
     if (this.sort == Sort.newToOld) {
       this._feedList.forEach((e) => e.articlesSort = sort);
       notifyListeners();
+    }
+  }
+
+  processArticleAction(ArticleActions action) {
+    switch (action) {
+      case ArticleActions.removeAll:
+        this.currentFeed.articles = [];
+        this.saveCurrentArticles();
+        break;
+      case ArticleActions.readAll:
+        this.currentFeed.articles.forEach((e) {
+          e.read = true;
+        });
+        this.saveCurrentArticles();
+        break;
+      case ArticleActions.downloadNews:
+        this.downloadArticles();
+        break;
+      case ArticleActions.sort:
+        this.changeSort();
+        break;
+      default:
+        print("Not implemented yet.");
+        break;
     }
   }
 }
