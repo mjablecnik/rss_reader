@@ -46,13 +46,13 @@ class Feed extends HiveObject {
         sourceFeed.description,
         sourceFeed.link,
         sourceUrl,
-        sourceFeed.image != null ? sourceFeed.image.url : defaultImageUrl,
+        sourceFeed?.image?.url ?? defaultImageUrl,
         sourceFeed.pubDate
     );
 
     feed.articles = [
       for (var item in sourceFeed.items)
-        Article(item.title, item.description, item.link, item.enclosure.url, item.pubDate)
+        Article(item.title, item.description, item.link, item?.enclosure?.url ?? defaultImageUrl, item.pubDate)
     ];
     return feed;
   }

@@ -662,7 +662,7 @@ packages:
     description:
       path: "."
       ref: master
-      resolved-ref: e4bca7c18fb7791639f78f7635897e62693ab81e
+      resolved-ref: "3e84c993265234da05a838273ad6b86cc38a758c"
       url: "https://github.com/mjablecnik/webfeed.git"
     source: git
     version: "0.6.0"
