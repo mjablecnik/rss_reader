@@ -46,7 +46,7 @@ class Downloader {
       for (var url in feedUrls) {
         try {
           var xmlSource = await _getSource(url);
-          var feed = Feed.fromXml(url, xmlSource);
+          var feed = Feed.fromXml(url, xmlSource, maxArticlesNum: 30);
           feeds.add(feed);
         } catch (e) {
           print("Cannot gain RssFeed for: " + url);

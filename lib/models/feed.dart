@@ -1,3 +1,4 @@
+import 'dart:math';
 import 'package:flutter_web_app/models/article.dart';
 import 'package:flutter_web_app/utils/enums.dart';
 import 'package:hive/hive.dart';
@@ -39,7 +40,7 @@ class Feed extends HiveObject {
 
   set articles(List<Article> articles) { _articles = articles; }
 
-  factory Feed.fromXml(String sourceUrl, String sourceXml) {
+  factory Feed.fromXml(String sourceUrl, String sourceXml, { int maxArticlesNum = 100 }) {
     var sourceFeed = RssFeed.parse(sourceXml);
     var feed = new Feed(
         sourceFeed.title,
@@ -50,8 +51,10 @@ class Feed extends HiveObject {
         sourceFeed.pubDate
     );
 
+    var articleItems = sourceFeed.items.sublist(0, min(maxArticlesNum, sourceFeed.items.length));
+
     feed.articles = [
-      for (var item in sourceFeed.items)
+      for (var item in articleItems)
         Article(item.title, item.description, item.link, item?.enclosure?.url ?? defaultImageUrl, item.pubDate)
     ];
     return feed;
@@ -76,7 +79,7 @@ class Feed extends HiveObject {
   }
 
   Future<void> parseNewArticles(xmlSource) async {
-    var articles = Feed.fromXml(this.sourceUrl, xmlSource)._articles;
+    var articles = Feed.fromXml(this.sourceUrl, xmlSource, maxArticlesNum: 50)._articles;
     if (this._articles.isEmpty) {
       this._articles = articles.reversed.toList();
     } else {
