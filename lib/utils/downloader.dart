@@ -18,7 +18,7 @@ class Downloader {
   }
 
   _setUrl(Uri url) {
-    if (url.isScheme("https")) {
+    if (!url.isScheme("https")) {
       this._url = Uri.parse("https://" + url.host + url.path);
     } else {
       this._url = url;
