@@ -4,57 +4,31 @@ import 'package:flutter_inappwebview/flutter_inappwebview.dart';
 import 'package:flutter_web_app/screens/url_form_screen.dart';
 
 
-class BrowserScreen extends StatelessWidget {
+
+class BrowserScreen extends StatefulWidget {
 
   String url;
 
   BrowserScreen ({ Key key, this.url }): super(key: key);
 
   @override
-  Widget build(BuildContext context) {
-    return Scaffold(
-        appBar: AppBar(
-          title: const Text('InAppWebView Example'),
-          //actions: [
-          //  GestureDetector(
-          //    onTap: () => {print("test")},
-          //    child: Container(
-          //      margin: EdgeInsets.only(left: 15, right: 15),
-          //      child: Icon(Icons.refresh)
-          //    )
-          //  )
-          //],
-        ),
-        body: Browser(url: url.replaceAll("http://", "https://")),
-    );
-  }
-}
-
-
-class Browser extends StatefulWidget {
-
-  String url;
-
-  Browser ({ Key key, this.url }): super(key: key);
-
-  @override
-  _BrowserState createState() => new _BrowserState();
+  _BrowserScreenState createState() => new _BrowserScreenState();
 
 }
 
 
-class _BrowserState extends State<Browser> {
+class _BrowserScreenState extends State<BrowserScreen> {
 
   InAppWebViewController webView;
   String url;
   double progress = 0;
-  bool withUrlBar = true;
-  bool withButtonBar = true;
+  bool withUrlBar = false;
+  bool withButtonBar = false;
 
 
   @override
   void initState() {
-    this.url = widget.url;
+    this.url = widget.url.replaceAll("http://", "https://");
     super.initState();
   }
 
@@ -68,7 +42,7 @@ class _BrowserState extends State<Browser> {
       return Container(
         padding: EdgeInsets.all(10.0),
         child: UrlForm(
-          defaultUrl: widget.url,
+          defaultUrl: widget.url.replaceAll("http://", "https://"),
           onSubmit: (url) {
             setState(() {
               this.url = url;
@@ -93,8 +67,6 @@ class _BrowserState extends State<Browser> {
 
   Container getWebView() {
     return Container(
-      //margin: const EdgeInsets.all(10.0),
-      //decoration: BoxDecoration(border: Border.all(color: Colors.blueAccent)),
       child: InAppWebView(
         initialUrl: this.url,
         initialHeaders: {},
@@ -177,13 +149,32 @@ class _BrowserState extends State<Browser> {
   @override
   Widget build(BuildContext context) {
 
-    return Container(
-      child: Column(children: <Widget>[
-        getUrlBar(withUrlBar),
-        getProgressIndicator(),
-        Expanded(child: getWebView()),
-        getButtonBar(withButtonBar)
-      ])
+    return Scaffold(
+      appBar: AppBar(
+        title: const Text('InAppWebView Example'),
+        actions: [
+          GestureDetector(
+            onTap: () => {
+              setState(() {
+                this.withButtonBar = withButtonBar ? false : true;
+                this.withUrlBar = withUrlBar ? false : true;
+              })
+            },
+            child: Container(
+              margin: EdgeInsets.only(left: 16, right: 16),
+              child: Icon(Icons.web)
+            )
+          )
+        ],
+      ),
+      body: Container(
+          child: Column(children: <Widget>[
+          getUrlBar(withUrlBar),
+          getProgressIndicator(),
+          Expanded(child: getWebView()),
+          getButtonBar(withButtonBar)
+        ])
+      ),
     );
   }
 }
