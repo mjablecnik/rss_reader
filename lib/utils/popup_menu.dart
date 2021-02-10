@@ -38,10 +38,6 @@ getPopupMenuItems(BuildContext context, {isPositioned = false}) {
         child: Text('Označit vše jako nepřečtené'),
       ),
     const PopupMenuItem<ArticleActions>(
-      value: ArticleActions.removeAll,
-      child: Text('Odstranit vše'),
-    ),
-    const PopupMenuItem<ArticleActions>(
       value: ArticleActions.removeAllRead,
       child: Text('Odstranit již přečtené'),
     ),

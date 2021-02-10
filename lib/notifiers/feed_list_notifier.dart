@@ -119,10 +119,6 @@ class FeedList extends ChangeNotifier {
 
   processArticleAction(ArticleActions action, {Article article}) {
     switch (action) {
-      case ArticleActions.removeAll:
-        this.currentFeed.articles = [];
-        this.saveCurrentArticles();
-        break;
       case ArticleActions.removeAllRead:
         this.currentFeed.removeAllReadArticles();
         this.saveCurrentArticles();
