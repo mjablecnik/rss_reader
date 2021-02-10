@@ -25,7 +25,7 @@ class BrowserScreen extends StatelessWidget {
           //  )
           //],
         ),
-        body: Browser(url: url),
+        body: Browser(url: url.replaceAll("http://", "https://")),
     );
   }
 }
