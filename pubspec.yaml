@@ -31,12 +31,13 @@ dependencies:
   reorderables: ^0.3.2
   charset_converter: ^1.0.3
   html_unescape: ^1.0.2
+  flutter_html: ^1.2.0
   flutter:
     sdk: flutter
   flutter_inappwebview:
     git:
       url: https://github.com/pichillilorenzo/flutter_inappwebview.git
-      ref: master
+      ref: 14e3e8c40c82fd766e6633326778845d8adf8e06
   feed_finder:
     git:
       url: https://github.com/mjablecnik/feed_finder.git

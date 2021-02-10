@@ -1,4 +1,6 @@
 import 'package:flutter/material.dart';
+import 'package:flutter_html/flutter_html.dart';
+import 'package:flutter_html/style.dart';
 import 'package:flutter_riverpod/all.dart';
 import 'package:flutter_web_app/main.dart';
 import 'package:flutter_web_app/models/article.dart';
@@ -10,7 +12,6 @@ class ArticleDetailScreen extends StatelessWidget {
   final Article article;
 
   ArticleDetailScreen({Key key, this.article}) : super(key: key);
-
 
   @override
   Widget build(BuildContext context) {
@@ -44,9 +45,21 @@ class ArticleDetailScreen extends StatelessWidget {
             Image.network(article.imageUrl),
             Container(
               margin: EdgeInsets.only(top: 30, bottom: 30),
-              child: Text(
-                HtmlUnescape().convert(article.description),
-                style: TextStyle(fontSize: 17, height: 1.4),
+              child: Html(
+                data: HtmlUnescape().convert(article.description),
+                style: {
+                  "p": Style(fontSize: FontSize.large, lineHeight: 1.35),
+                  "a": Style(fontSize: FontSize.large, lineHeight: 1.35),
+                  "body": Style(fontSize: FontSize.large, lineHeight: 1.35),
+                },
+                onLinkTap: (url) {
+                  Navigator.push(
+                    context,
+                    MaterialPageRoute(
+                      builder: (context) => BrowserScreen(url: url),
+                    ),
+                  );
+                },
               ),
             ),
             Container(
