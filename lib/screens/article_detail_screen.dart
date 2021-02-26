@@ -7,6 +7,7 @@ import 'package:flutter_web_app/models/article.dart';
 import 'package:flutter_web_app/screens/browser_screen.dart';
 import 'package:html_unescape/html_unescape.dart';
 import 'package:intl/intl.dart';
+import 'package:url_launcher/url_launcher.dart';
 
 class ArticleDetailScreen extends StatelessWidget {
   final Article article;
@@ -18,6 +19,22 @@ class ArticleDetailScreen extends StatelessWidget {
     return Scaffold(
       appBar: AppBar(
         title: Text(context.read(feedsProvider).currentFeed.title),
+        actions: [
+          GestureDetector(
+            child: Container(
+              margin: EdgeInsets.only(left: 16, right: 16),
+              child: Icon(Icons.open_in_browser),
+            ),
+            onTap: () {
+              Navigator.push(
+                context,
+                MaterialPageRoute(
+                  builder: (context) => BrowserScreen(url: article.originalUrl),
+                ),
+              );
+            },
+          )
+        ],
       ),
       body: Container(
         child: ListView(
@@ -67,12 +84,7 @@ class ArticleDetailScreen extends StatelessWidget {
               child: RaisedButton(
                 color: Colors.white24,
                 onPressed: () {
-                  Navigator.push(
-                    context,
-                    MaterialPageRoute(
-                      builder: (context) => BrowserScreen(url: article.originalUrl),
-                    ),
-                  );
+                  launch(article.originalUrl, forceWebView: true);
                 },
                 child: Text(
                   "Pokračovat na web",
