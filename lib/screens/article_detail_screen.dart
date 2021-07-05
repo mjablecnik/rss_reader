@@ -26,12 +26,13 @@ class ArticleDetailScreen extends StatelessWidget {
               child: Icon(Icons.open_in_browser),
             ),
             onTap: () {
-              Navigator.push(
-                context,
-                MaterialPageRoute(
-                  builder: (context) => BrowserScreen(url: article.originalUrl),
-                ),
-              );
+              launch(article.originalUrl);
+              //Navigator.push(
+              //  context,
+              //  MaterialPageRoute(
+              //    builder: (context) => BrowserScreen(url: article.originalUrl),
+              //  ),
+              //);
             },
           )
         ],
