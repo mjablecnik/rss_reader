@@ -85,7 +85,7 @@ class ArticleDetailScreen extends StatelessWidget {
               child: RaisedButton(
                 color: Colors.white24,
                 onPressed: () {
-                  launch(article.originalUrl, forceWebView: true);
+                  launch(article.originalUrl, forceWebView: true, enableJavaScript: false, enableDomStorage: false);
                 },
                 child: Text(
                   "Pokračovat na web",
